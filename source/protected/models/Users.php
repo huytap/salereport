@@ -66,14 +66,28 @@ class Users extends CrmActiveRecord
         );
     }
 
+    protected function searchCriteria()
+    {
+        $criteria = parent::searchCriteria();
+        if (!ActionAccess::isAll()) { $criteria->compare('t.id',Yii::app()->user->id ?: -1); }
+        return $criteria;
+    }
+
     public function getList()
     {
-        return CHtml::listData($this->findAll(array('order' => 'username ASC')), 'id', 'username');
+        return CHtml::listData($this->findAll($this->scopedOptionsCriteria('username')), 'id', 'username');
+    }
+
+    private function scopedOptionsCriteria($order)
+    {
+        $criteria = CustomerPolicy::visibleUsersCriteria();
+        $criteria->order = 't.'.$order.' ASC';
+        return $criteria;
     }
 
     public function getList2()
     {
-        return CHtml::listData($this->findAll(array('order' => 'fullname ASC')), 'id', 'fullname');
+        return CHtml::listData($this->findAll($this->scopedOptionsCriteria('fullname')), 'id', 'fullname');
     }
 
     public function getByUsername($username)

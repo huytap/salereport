@@ -6,6 +6,7 @@ class ContactController extends ManagementController
 
     public function actionCreate()
     {
+        CustomerPolicy::requireLegacyWrite('contact','create');
         $this->editContact(new Contact('create'), 'create');
     }
 
@@ -17,6 +18,7 @@ class ContactController extends ManagementController
     protected function editContact($model, $view)
     {
         if (isset($_POST['Contact']) && is_array($_POST['Contact'])) {
+            CustomerPolicy::requireLegacyWrite('contact', $model->isNewRecord ? 'create' : 'update', $model);
             $model->attributes = $_POST['Contact'];
             // An unselected HTML multi-select is omitted from POST.
             foreach (array('hotel_produced', 'market') as $name) {
@@ -43,11 +45,14 @@ class ContactController extends ManagementController
 
     public function actionDelete($id)
     {
-        $this->finishDelete($this->loadModel($id));
+        $model = $this->loadModel($id);
+        CustomerPolicy::requireLegacyWrite('contact','delete',$model);
+        $this->finishDelete($model);
     }
 
     public function actionImport()
     {
+        CustomerPolicy::requireLegacyWrite('contact','import');
         $model = new Contact('import');
         $flag = '';
         if (Yii::app()->request->isPostRequest) {
@@ -76,6 +81,7 @@ class ContactController extends ManagementController
 
     public function actionReport()
     {
+        ActionAccess::requireAction('contact','report');
         if (Yii::app()->request->isPostRequest && Yii::app()->request->getPost('do_export') === 'yes') {
             $this->exportExcel();
             return;
@@ -83,11 +89,19 @@ class ContactController extends ManagementController
         $this->render('report', array('datalist' => ReportHelper::dataContact()));
     }
 
+    protected function exportCriteria()
+    {
+        $criteria = CustomerPolicy::criteria('contact','contact','report');
+        $criteria->order = 't.id ASC';
+        return $criteria;
+    }
+
     protected function exportExcel()
     {
+        ActionAccess::requireAction('contact','report');
         $path = tempnam(sys_get_temp_dir(), 'crm-contact-export-');
         try {
-            ContactExcel::write($path, Contact::model()->findAll(array('order' => 'id ASC')));
+            ContactExcel::write($path, Contact::model()->findAll($this->exportCriteria()));
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment; filename="contacts.xlsx"');
             header('Cache-Control: private, no-store');

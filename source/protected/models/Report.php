@@ -39,7 +39,10 @@ class Report extends CrmActiveRecord
 
     public function getByCompany($company)
     {
-        $previous = $this->findByAttributes(array('company_name' => $company), array('order' => 'date DESC, id DESC'));
+        $criteria = CustomerPolicy::criteria('report','report','create');
+        $criteria->compare('t.company_name',$company);
+        $criteria->order = 't.date DESC, t.id DESC';
+        $previous = $this->find($criteria);
         $report = new self;
         if ($previous) {
             // Copy company/contact details, never the previous row's identity or audit fields.
@@ -57,9 +60,7 @@ class Report extends CrmActiveRecord
     protected function searchCriteria()
     {
         $criteria = parent::searchCriteria();
-        if (Yii::app()->user->id != 1 && Yii::app()->user->getState('type') === 'users') {
-            $criteria->compare('t.added_by', Yii::app()->user->id);
-        }
+        $criteria->mergeWith(CustomerPolicy::criteria('report','report','admin'));
         $filter = Yii::app()->request->getParam('filter', array());
         if (!is_array($filter)) {
             return $criteria;

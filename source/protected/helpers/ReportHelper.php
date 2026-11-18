@@ -3,7 +3,7 @@ class ReportHelper{
 
 	public static function dataContact() {
 
-		$dataProvider = Contact::model()->getList();
+		$dataProvider = new CActiveDataProvider('Contact',array('criteria'=>CustomerPolicy::criteria('contact','contact','report'),'pagination'=>false));
 		$arr=array();
 		$arrTheList = array();
 		$arrTheList = $dataProvider->getData();

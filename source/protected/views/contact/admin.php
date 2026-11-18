@@ -25,6 +25,7 @@ $this->menu=array(
     </span>
 </div> -->
 <form method="post" class="form-inline" id="form_filter">
+<?php echo CHtml::hiddenField(Yii::app()->request->csrfTokenName,Yii::app()->request->csrfToken); ?>
 	<input type="hidden" name="do_export" value="" id="do_export"/>
 </form>
 <div class="row">
@@ -37,7 +38,7 @@ $this->menu=array(
             <div class="panel-body">
                 <div class="table-responsive">
 					<?php 
-                        if(Yii::app()->user->id == 1 || Yii::app()->user->getState('type') == 'superadmin' || Yii::app()->user->getState('type') == 'admin'){
+                        if(ActionAccess::isAll()){
                             $this->renderPartial('_grid_admin', compact(array('model')));
                         }else{
                             $this->renderPartial('_grid', compact(array('model')));

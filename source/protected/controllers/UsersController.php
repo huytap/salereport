@@ -6,6 +6,7 @@ class UsersController extends ManagementController
 
     public function actionCreate()
     {
+        if (!ActionAccess::isAll()) { throw new CHttpException(403,'All scope is required to create accounts.'); }
         $model = new Users('create');
         if (isset($_POST['Users']) && is_array($_POST['Users'])) {
             $this->assignUser($model, $_POST['Users']);
@@ -40,8 +41,13 @@ class UsersController extends ManagementController
 
     protected function assignUser($model, $attributes)
     {
-        if (Yii::app()->user->id != 1 && Yii::app()->user->getState('type') !== 'superadmin') {
-            unset($attributes['roles'], $attributes['hotel'], $attributes['group']);
+        if (!ActionAccess::isAll()) {
+            unset($attributes['roles'], $attributes['hotel'], $attributes['group'], $attributes['status'], $attributes['username']);
+        }
+        if (isset($attributes['status']) && $attributes['status'] !== 'A' && !$model->isNewRecord && CustomerPolicy::ready()) {
+            $open = Yii::app()->db->createCommand("SELECT COUNT(*) FROM crm_task WHERE assignee_user_id=:id AND status IN ('open','in_progress')")->queryScalar(array(':id'=>$model->id));
+            $owned = Yii::app()->db->createCommand("SELECT COUNT(*) FROM crm_account_hotel WHERE owner_user_id=:id AND status='active'")->queryScalar(array(':id'=>$model->id));
+            if ($open || $owned) { throw new CHttpException(409,'Hand over accounts and open tasks before deactivation.'); }
         }
         $model->attributes = $attributes;
     }
@@ -52,6 +58,8 @@ class UsersController extends ManagementController
         if ($model->id == 1 || $model->id == Yii::app()->user->id) {
             throw new CHttpException(403, 'The system administrator and your own account cannot be deleted.');
         }
+        if (!ActionAccess::isAll()) { throw new CHttpException(403,'All scope is required.'); }
+        if (CustomerPolicy::hasUserReferences($model->id)) { throw new CHttpException(409,'This user is referenced by MVP data; hand over and deactivate instead.'); }
         $this->finishDelete($model);
     }
 
@@ -68,5 +76,19 @@ class UsersController extends ManagementController
             return;
         }
         $this->render('history', array('model' => $model));
+    }
+
+    public function actionHotelaccess($id)
+    {
+        if (!ActionAccess::isAll()) { throw new CHttpException(403,'All scope is required.'); }
+        if (!is_scalar($id) || !ctype_digit((string)$id) || !ActionAccess::user($id)) { throw new CHttpException(404,'Active user not found.'); }
+        if (Yii::app()->request->isPostRequest) {
+            $grants=Yii::app()->request->getPost('grants',array());
+            if (!is_array($grants)) { throw new CHttpException(400,'Invalid grants.'); }
+            HotelAccessService::replace($id,$grants,Yii::app()->request->getPost('reason',''));
+        }
+        header('Content-Type: application/json; charset=UTF-8');
+        $rows=Yii::app()->db->createCommand('SELECT hotel_id,scope_level FROM crm_user_hotel_access WHERE user_id=:id ORDER BY hotel_id')->queryAll(true,array(':id'=>$id));
+        echo CJSON::encode($rows);
     }
 }

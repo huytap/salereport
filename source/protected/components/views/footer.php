@@ -25,19 +25,6 @@
     <script src="<?php echo Yii::app()->request->baseUrl; ?>/chosen/chosen.jquery.js" type="text/javascript"></script>
     <script type="text/javascript" src="<?php echo Yii::app()->baseUrl?>/js/custom.js"></script>
 
-    <script type="text/javascript">
-        $.ajax({
-            url: '<?php echo Yii::app()->baseUrl?>/ajax/reminderDaily',
-            type: 'post',
-            data: {ent:'ent'},
-            async: false,
-            //dataType: 'json',
-            success:function(data){
-                //$('#reminder').html(data);
-                $('#reminder-js').append(data);
-            }
-        });
-    </script>
 </body>
 
 </html>

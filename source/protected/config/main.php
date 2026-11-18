@@ -17,6 +17,7 @@ return array(
 		'application.models.*',
 		'application.components.*',
 		'application.helpers.*',
+		'application.services.*',
 		//'ext.php-imap-client.*',
 	),
 
@@ -34,6 +35,7 @@ return array(
 
 	// application components
 	'components'=>array(
+		'request'=>array('enableCsrfValidation'=>true),
 		'user'=>array(
 			// enable cookie-based authentication
 			'class' => 'WebUser',

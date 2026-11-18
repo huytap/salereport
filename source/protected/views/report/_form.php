@@ -294,7 +294,7 @@ if(Yii::app()->controller->action->id == 'create' ||
             if(company_name){
                 $.ajax({
                     url: '<?php echo Yii::app()->baseUrl?>/report/create',
-                    data: {company:company_name},
+                    data: {company:company_name, <?php echo json_encode(Yii::app()->request->csrfTokenName); ?>: <?php echo json_encode(Yii::app()->request->csrfToken); ?>},
                     async: false,
                     type: 'post',
                     success:function(data){

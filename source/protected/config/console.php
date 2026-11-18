@@ -4,7 +4,7 @@
 return array(
     'basePath' => dirname(__FILE__).'/..',
     'name' => 'Sales Report isolated CLI',
-    'import' => array('application.models.*', 'application.components.*', 'application.helpers.*'),
+    'import' => array('application.models.*', 'application.components.*', 'application.helpers.*', 'application.services.*'),
     'components' => array('db' => require dirname(__FILE__).'/db-test.php'),
     'params' => array('mvp' => require dirname(__FILE__).'/mvp.php'),
     'commandMap' => array('migrate' => array(

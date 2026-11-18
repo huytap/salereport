@@ -85,13 +85,7 @@ $this->widget('booster.widgets.TbJsonGridView', array(
         ),
         array('name'=>'comments',
             'type' => 'raw',
-            'value'=>function($data){
-                if(Yii::app()->user->id == 1 || Yii::app()->user->getState('type') == 'superadmin' || 
-                    Yii::app()->user->getState('type') == 'admin')
-                    return '<textarea id="cmt'.$data->id.'" style="display:inline-block;width:70%;height:100%">'.$data->comments.'</textarea> <button type="button" onclick="changeArea('.$data->id.')" class="btn btn-small" style="display:inline-block;vertical-align:top;">Save</button>';
-                else
-                    return $data->comments;
-            },
+            'value'=>function($data){ return CHtml::encode($data->comments); },
             'headerHtmlOptions' => array('width' => 360,'style' => 'text-align:center;'),
         ),
         /*array(

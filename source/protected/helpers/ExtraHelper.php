@@ -117,7 +117,13 @@ class ExtraHelper {
 		if (!$field_name) {
 			return array();
 		}
-		$criteria=new CDbCriteria;
+        $types = array('contact'=>'contact','report'=>'report','account'=>'account','contactperson'=>'person');
+        $key = strtolower($object_name);
+        $criteria = isset($types[$key]) ? CustomerPolicy::scopeCriteria($types[$key]) : new CDbCriteria;
+        $controller = $key === 'contactperson' ? 'account' : $key;
+        if (isset($types[$key]) && !ActionAccess::can($controller,'admin') && !ActionAccess::can($controller,'view')) { $criteria->addCondition('1=0'); }
+        $schema = $object_name::model()->getTableSchema();
+        if (!is_string($field_name) || !isset($schema->columns[$field_name])) { return array(); }
 		$criteria->distinct = true;
 		$criteria->select = array($field_name);
 		

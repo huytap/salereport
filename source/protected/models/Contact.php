@@ -49,6 +49,13 @@ class Contact extends CrmActiveRecord
         );
     }
 
+    protected function searchCriteria()
+    {
+        $criteria = parent::searchCriteria();
+        $criteria->mergeWith(CustomerPolicy::criteria('contact','contact','admin'));
+        return $criteria;
+    }
+
     public function getList()
     {
         $provider = $this->search();

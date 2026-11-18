@@ -21,4 +21,10 @@ class UserHistory extends CrmActiveRecord
             'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
         );
     }
+    protected function searchCriteria()
+    {
+        $criteria = parent::searchCriteria();
+        if (!ActionAccess::isAll()) { $criteria->compare('t.user_id',Yii::app()->user->id ?: -1); }
+        return $criteria;
+    }
 }

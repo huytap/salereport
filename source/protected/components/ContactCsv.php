@@ -29,6 +29,7 @@ class ContactCsv
 
     public static function importStream($stream)
     {
+        CustomerPolicy::requireLegacyWrite('contact','import');
         $header = fgetcsv($stream);
         if (!$header) {
             throw new InvalidArgumentException('The CSV file is empty.');

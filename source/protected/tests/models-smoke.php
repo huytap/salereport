@@ -5,6 +5,7 @@ if (PHP_SAPI !== 'cli') {
     exit;
 }
 $root = dirname(__FILE__).'/../..';
+ob_start();
 define('YII_ENABLE_EXCEPTION_HANDLER', false);
 define('YII_ENABLE_ERROR_HANDLER', false);
 define('IS_IN_TESTS', true);
@@ -128,6 +129,7 @@ try {
     $user->status = 'I';
     modelCheck($user->save(), 'Status update failed.');
     modelCheck(!(new UserIdentityAm('fixture_user', 'replacement-password'))->authenticate(), 'Inactive user must not authenticate.');
+    $user->status='A'; modelCheck($user->save(),'Restore active fixture actor.');
 
     $invalid = new Contact;
     $invalid->company = str_repeat('x', 256);

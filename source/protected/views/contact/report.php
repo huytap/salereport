@@ -19,6 +19,7 @@ th, td {
     </div>
 </div>
 <form id="form_filter" method="post">
+<?php echo CHtml::hiddenField(Yii::app()->request->csrfTokenName,Yii::app()->request->csrfToken); ?>
 	<input type="hidden" id="do_export" name="do_export">
 </form>
 <div class="row">

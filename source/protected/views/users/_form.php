@@ -85,7 +85,7 @@ $form = $this->beginWidget('CActiveForm', array(
 
                 <?php
                 if((Yii::app()->controller->action->id == 'create' && Yii::app()->user->id == $model->id) || 
-                    Yii::app()->user->getState('type') == 'superadmin' || Yii::app()->user->id==1){?>
+                    ActionAccess::isAll()){?>
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">

@@ -16,4 +16,14 @@ class Controller extends CController
 	public $menu=array();
 
 	public $breadcrumbs=array();
+    protected function beforeAction($action)
+    {
+        if (!Yii::app()->user->isGuest && !ActionAccess::user() && !in_array($action->id,array('logout','error'),true)) {
+            throw new CHttpException(403, 'This account is no longer active.');
+        }
+        if (Yii::app()->request->isPostRequest) {
+            Yii::app()->request->validateCsrfToken(new CEvent($this));
+        }
+        return parent::beforeAction($action);
+    }
 }

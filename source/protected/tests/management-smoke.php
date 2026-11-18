@@ -27,6 +27,7 @@ class ManagementSmokeRequest extends CHttpRequest
 {
     public $method = 'GET';
     public $ajax = false;
+    public function getRequestType() { return $this->method; }
     public function getIsPostRequest() { return $this->method === 'POST'; }
     public function getIsAjaxRequest() { return $this->ajax; }
     public function getUserHostAddress() { return '127.0.0.1'; }
@@ -42,7 +43,7 @@ $_SERVER['HTTP_HOST'] = 'crm.hthub.local';
 $_SERVER['REQUEST_URI'] = '/';
 $config = require $root.'/protected/config/test.php';
 $config['components']['user'] = array('class'=>'ManagementSmokeUser');
-$config['components']['request'] = array('class'=>'ManagementSmokeRequest');
+$config['components']['request'] = array('class'=>'ManagementSmokeRequest','enableCsrfValidation'=>true);
 $config['components']['log']['routes'] = array();
 $app = Yii::createWebApplication($config);
 Yii::import('application.controllers.*');
@@ -54,6 +55,7 @@ function managementCheck($condition, $message) { if (!$condition) { throw new Ex
 function managementRun($class, $id, $action, $get = array(), $post = array(), $ajax = false, $method = null)
 {
     $_GET = $get; $_POST = $post;
+    if ($post || $method === 'POST') { $_POST[Yii::app()->request->csrfTokenName] = Yii::app()->request->csrfToken; }
     Yii::app()->request->method = $method ?: ($post ? 'POST' : 'GET');
     Yii::app()->request->ajax = $ajax;
     $controller = new $class($id);
@@ -175,7 +177,7 @@ try {
     managementRun('TestSiteController','site','changepassword',array('id'=>1),array('Users'=>array('old_password'=>'updated-password','new_password'=>'changed-password','confirm_new_password'=>'changed-password')));
     $user->refresh(); $admin->refresh();
     managementCheck($user->password===sha1(md5('changed-password')) && $admin->password===sha1(md5('test-password')), 'Password change must only affect the session account.');
-    managementRun('TestSiteController','site','logout');
+    managementRun('TestSiteController','site','logout',array(),array('logout'=>'yes'));
     $history->refresh(); managementCheck($history->logout_time!==null,'Logout history was not recorded.');
     ManagementSmokeUser::$currentId='1'; ManagementSmokeUser::$states=array();
     $json = managementRun('TestUsersController','users','history',array(),array(),true);

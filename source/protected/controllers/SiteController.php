@@ -4,7 +4,7 @@ class SiteController extends Controller
 {
     public function filters()
     {
-        return array('accessControl');
+        return array('accessControl','postOnly + logout');
     }
 
     public function accessRules()
@@ -48,11 +48,9 @@ class SiteController extends Controller
     public function actionAdmin()
     {
         $counts = array('contact' => 0, 'report' => 0, 'staff' => 0);
-        if (Yii::app()->user->id == 1 || Yii::app()->user->getState('type') === 'superadmin') {
-            foreach (array('contact' => 'contact', 'report' => 'reports', 'staff' => 'staff_asst') as $key => $table) {
-                $counts[$key] = Yii::app()->db->createCommand()->select('COUNT(*)')->from($table)->queryScalar();
-            }
-        }
+        if (ActionAccess::can('contact','admin')) { $counts['contact']=Contact::model()->count(CustomerPolicy::scopeCriteria('contact')); }
+        if (ActionAccess::can('report','admin')) { $counts['report']=Report::model()->count(CustomerPolicy::scopeCriteria('report')); }
+        if (ActionAccess::isAll()) { $counts['staff']=Yii::app()->db->createCommand()->select('COUNT(*)')->from('staff_asst')->queryScalar(); }
         $this->render('admin', array('counts' => $counts));
     }
 

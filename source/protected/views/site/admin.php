@@ -1,7 +1,7 @@
 <h1>Welcome to Ho Tram Resort</h1>
 <p>Please chose function above</p>
 <?php 
-if(Yii::app()->user->id == '1' || Yii::app()->user->getState('type') == 'superadmin'){?>
+if(ActionAccess::user()){?>
     <div class="row">
         <div class="col-lg-3 col-md-6">
             <div class="panel panel-primary">

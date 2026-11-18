@@ -21,7 +21,7 @@ $this->menu=array(
             <label>To Date</label>
             <?php echo CHtml::textField('filter[to_date]', $filter['to_date'], array('class' => 'form-control datepicker'));?>
         </div>
-        <?php if(Yii::app()->user->id == 1 || Yii::app()->user->getState('type') !== 'users'){?>
+        <?php if(ActionAccess::isAll() || count(Users::model()->getList()) > 1){?>
             <div class="col-md-2 col-sm-4">
                 <label>By SM</label>
                 <?php echo CHtml::dropDownlist('filter[by]', $filter['by'], array('' => 'All') + Users::model()->getList(), array('class' => 'form-control'));?>
@@ -36,6 +36,7 @@ $this->menu=array(
 </div>
 <hr>
 <form method="post" class="form-inline" id="form_filter">
+	<?php echo CHtml::hiddenField(Yii::app()->request->csrfTokenName,Yii::app()->request->csrfToken); ?>
 	<input type="hidden" name="do_export" value="" id="do_export"/>
 </form>
 <div class="row">
@@ -49,7 +50,7 @@ $this->menu=array(
             <div class="panel-body">
                 <div class="table-responsive">
 					<?php 
-                        if(Yii::app()->user->id == 1 || Yii::app()->user->getState('type') == 'superadmin' || Yii::app()->user->getState('type') == 'admin'){
+                        if(ActionAccess::isAll()){
                             $this->renderPartial('_grid_admin', compact(array('model')));
                         }else{
                             $this->renderPartial('_grid', compact(array('model')));
@@ -96,27 +97,5 @@ function prepareReport() {
             }
         });
     } 
-    function changeArea(id){
-        var comment = $('#cmt'+id).val();
-        if(comment.length){
-            $.ajax({
-                url: '<?php echo Yii::app()->baseUrl?>/ajax/changeCMT',
-                data: {id:id, cmt: comment},
-                dataType: 'json',
-                type: 'post',
-                beforeSend: function(){
-                    $('#loading').show();
-                },
-                success: function(data){
-                    if(data=='1'){
-                        alert('Comment is updated')
-                        $('#loading').hide();
-                    }else{
-                        alert(data)
-                    }
-                }
-            })
-        }
-    }
     row_color_update();
 </script>
