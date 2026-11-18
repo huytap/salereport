@@ -3,6 +3,7 @@
     <div class="navbar-header"><a class="navbar-brand" href="<?php echo Yii::app()->createUrl('site/admin'); ?>">Ho Tram Resort</a></div>
     <ul class="nav navbar-top-links navbar-right" id="navMenu">
     <?php foreach (Yii::app()->params['menu'] as $controller=>$items):
+        if ($controller==='customerimport' && (!ActionAccess::isAll() || empty(Yii::app()->params['mvp']['legacyImportEnabled']))) { continue; }
         $allowed = ActionAccess::actions($controller);
         $visible = array_intersect_key($items,array_flip($allowed));
         // Creation/import through unsafe legacy forms is available only to All during transition.

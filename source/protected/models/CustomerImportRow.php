@@ -5,7 +5,7 @@ class CustomerImportRow extends MvpActiveRecord
     protected $requiredFields = array('raw_json');
     protected $enumFields = array('result_state'=>array('created', 'linked', 'skipped', 'error', 'needs_review'));
     protected $referenceFields = array('batch_id'=>'CustomerImportBatch', 'result_account_id'=>'Account', 'result_contact_id'=>'ContactPerson', 'result_task_id'=>'Task');
-    protected $jsonFields = array('raw_json', 'proposed_json');
+    protected $jsonFields = array('raw_json', 'proposed_json', 'decision_json', 'result_json');
 
     public function tableName() { return 'crm_import_row'; }
 

@@ -1,0 +1,9 @@
+<h1>Đối soát đợt #<?php echo (int)$result['batch']['id']; ?></h1>
+<p><?php echo CHtml::link('Quay lại mapping',array('view','id'=>$result['batch']['id'])); ?> | <?php echo CHtml::link('Dữ liệu đối soát JSON',array('reconcile','id'=>$result['batch']['id'],'format'=>'json')); ?></p>
+<table class="table table-bordered"><tbody>
+<?php foreach (array('total'=>'Tổng số dòng nguồn','created'=>'Dòng tạo doanh nghiệp mới','linked'=>'Dòng liên kết hồ sơ','skipped'=>'Dòng bỏ qua đã duyệt','error'=>'Dòng lỗi cần xử lý','needs_review'=>'Dòng chưa có kết quả cuối') as $key=>$label): ?><tr><th><?php echo $label; ?></th><td><?php echo (int)$result['counts'][$key]; ?></td></tr><?php endforeach; ?>
+</tbody></table>
+<p>Tổng các nhóm kết quả <?php echo $result['counts']['balanced']?'khớp':'không khớp'; ?> số dòng nguồn.</p>
+<p>Đã tạo <?php echo (int)$result['objects']['accounts_created']; ?> doanh nghiệp, <?php echo (int)$result['objects']['contacts_created']; ?> người liên hệ và <?php echo (int)$result['objects']['assignments_created']; ?> quan hệ khách sạn. Đã nối <?php echo (int)$result['objects']['reports_linked']; ?> Sales Report.</p>
+<?php if ($result['counts']['error'] || $result['counts']['needs_review']): ?><div class="alert alert-warning">Đợt này còn dòng chưa xử lý xong. Các dòng đã thành công được giữ nguyên khi tiếp tục.</div><?php endif; ?>
+<?php if ($result['consistent']): ?><div class="alert alert-success">Liên kết của các dòng đã thành công khớp hồ sơ đích và snapshot nguồn.</div><?php else: ?><div class="alert alert-danger">Có sai lệch cần kiểm tra, không tự sửa liên kết hoặc dữ liệu nguồn.</div><ul><?php foreach ($result['issues'] as $issue): ?><li><?php echo CHtml::link('Dòng '.$issue['row_no'],array('view','id'=>$result['batch']['id'],'row'=>$issue['row_no'])); ?> — <?php echo CHtml::encode($issue['code']); ?></li><?php endforeach; ?></ul><?php endif; ?>

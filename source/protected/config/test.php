@@ -7,4 +7,5 @@ $config['components']['fixture'] = array('class' => 'system.test.CDbFixtureManag
 $config['components']['log']['routes'] = array();
 $config['modules'] = array();
 $config['params']['mvp'] = require dirname(__FILE__).'/mvp.php';
+$config['params']['mvp']['legacyImportEnabled'] = true;
 return $config;

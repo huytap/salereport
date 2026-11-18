@@ -69,7 +69,7 @@ return array(
 		*/
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
-			'errorAction'=>'site/error',
+			//'errorAction'=>'site/error',
 		),
 		'log'=>array(
 			'class'=>'CLogRouter',

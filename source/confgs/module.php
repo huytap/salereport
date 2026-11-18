@@ -1,5 +1,6 @@
 <?php
 return array(
+    'customerimport' => 'Chuyển đổi hồ sơ',
 	"contact" => 'Contact DB',
 	"report" => 'Sales Report',
 	//"staffasst" => 'Staff Assessment',

@@ -1,5 +1,6 @@
 <?php
 return array(
+    'customerimport' => array('admin'=>'Preview và mapping'),
 	"contact" => array(
 		'admin' => 'All', 
 		'create' => 'Add new', 
