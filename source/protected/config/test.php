@@ -1,17 +1,10 @@
 <?php
 
-return CMap::mergeArray(
-	require(dirname(__FILE__).'/main.php'),
-	array(
-		'components'=>array(
-			'fixture'=>array(
-				'class'=>'system.test.CDbFixtureManager',
-			),
-			/* uncomment the following to provide test database connection
-			'db'=>array(
-				'connectionString'=>'DSN for test database',
-			),
-			*/
-		),
-	)
-);
+$config = require dirname(__FILE__).'/main.php';
+$config['name'] = 'Sales Report isolated tests';
+$config['components']['db'] = require dirname(__FILE__).'/db-test.php';
+$config['components']['fixture'] = array('class' => 'system.test.CDbFixtureManager');
+$config['components']['log']['routes'] = array();
+$config['modules'] = array();
+$config['params']['mvp'] = require dirname(__FILE__).'/mvp.php';
+return $config;

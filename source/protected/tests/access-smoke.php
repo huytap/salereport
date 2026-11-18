@@ -23,7 +23,7 @@ $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['HTTP_HOST'] = 'crm.hthub.local';
 $_SERVER['REQUEST_URI'] = '/site/admin';
 $_SERVER['REQUEST_METHOD'] = 'GET';
-$config = require $root.'/protected/config/main.php';
+$config = require $root.'/protected/config/test.php';
 $config['components']['user'] = array('class' => 'AccessSmokeUser');
 $config['components']['log']['routes'] = array();
 $app = Yii::createWebApplication($config);

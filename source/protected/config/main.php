@@ -89,6 +89,7 @@ return array(
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
+		'mvp' => require(dirname(__FILE__).'/mvp.php'),
 		'adminEmail'=>'webmaster@example.com',
 		'all_roles' => require(dirname(__FILE__).'/../../confgs/roles.php'),
 		'access_right' => require(dirname(__FILE__).'/../../confgs/access_rights.php'),	

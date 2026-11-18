@@ -40,7 +40,7 @@ $_SERVER['SCRIPT_FILENAME'] = realpath($root.'/index.php');
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['HTTP_HOST'] = 'crm.hthub.local';
 $_SERVER['REQUEST_URI'] = '/';
-$config = require $root.'/protected/config/main.php';
+$config = require $root.'/protected/config/test.php';
 $config['components']['user'] = array('class'=>'ManagementSmokeUser');
 $config['components']['request'] = array('class'=>'ManagementSmokeRequest');
 $config['components']['log']['routes'] = array();
@@ -69,10 +69,11 @@ function managementRun($class, $id, $action, $get = array(), $post = array(), $a
     return $html;
 }
 $tables = array('contact', 'users', 'roles', 'user_history', 'trackings');
+require_once __DIR__.'/support/TemporaryTableFixture.php';
 try {
     foreach ($tables as $table) {
         $row = $app->db->createCommand('SHOW CREATE TABLE '.$app->db->quoteTableName($table))->queryRow();
-        $ddl = preg_replace('/AUTO_INCREMENT=\d+\b/', 'AUTO_INCREMENT=1', preg_replace('/^CREATE TABLE /', 'CREATE TEMPORARY TABLE ', $row['Create Table']));
+        $ddl = isolatedTemporaryTableDdl($row['Create Table']);
         $app->db->createCommand($ddl)->execute();
     }
     require_once $root.'/protected/migrations/m261118_090000_restore_optional_dates.php';

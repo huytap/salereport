@@ -15,12 +15,25 @@ class Report extends CrmActiveRecord
         return 'reports';
     }
 
+    public function rules()
+    {
+        $rules = parent::rules();
+        // Schema may not yet be migrated on the live web database. Never mass-assign MVP IDs/state.
+        $protected = array_intersect(array('account_id','contact_person_id','hotel_id','identity_state','lock_version','client_request_key'), $this->attributeNames());
+        if ($protected) { $rules[] = array(implode(',', $protected), 'unsafe'); }
+        return $rules;
+    }
+
     public function relations()
     {
         return array(
-            'user' => array(self::BELONGS_TO, 'Users', 'added_by'),
-            'addedBy' => array(self::BELONGS_TO, 'Users', 'added_by'),
-            'updatedBy' => array(self::BELONGS_TO, 'Users', 'updated_by'),
+            'account' => array(self::BELONGS_TO, 'Account', array('account_id'=>'id')),
+            'contactPerson' => array(self::BELONGS_TO, 'ContactPerson', array('contact_person_id'=>'id')),
+            'hotel' => array(self::BELONGS_TO, 'Hotel', array('hotel_id'=>'id')),
+            'tasks' => array(self::HAS_MANY, 'Task', array('report_id'=>'id')),
+            'user' => array(self::BELONGS_TO, 'Users', array('added_by'=>'id')),
+            'addedBy' => array(self::BELONGS_TO, 'Users', array('added_by'=>'id')),
+            'updatedBy' => array(self::BELONGS_TO, 'Users', array('updated_by'=>'id')),
         );
     }
 

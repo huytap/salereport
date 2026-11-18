@@ -21,7 +21,7 @@ $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['HTTP_HOST'] = 'crm.hthub.local';
 $_SERVER['REQUEST_URI'] = '/';
 $_SERVER['REQUEST_METHOD'] = 'GET';
-$config = require $root.'/protected/config/main.php';
+$config = require $root.'/protected/config/test.php';
 $config['components']['user'] = array('class' => 'ModelSmokeUser');
 $config['components']['log']['routes'] = array();
 $app = Yii::createWebApplication($config);
@@ -36,6 +36,7 @@ $updateFields = array('Users'=>'fullname', 'Role'=>'remark', 'Contact'=>'company
     'Report'=>'company_name', 'StaffAsst'=>'comment', 'Trackings'=>'object_name',
     'UserHistory'=>'ip_address', 'Incident'=>'guest_name');
 $ddl = array();
+require_once __DIR__.'/support/TemporaryTableFixture.php';
 foreach ($models as $class) {
     $model = new $class('search');
     $model->unsetAttributes();
@@ -44,8 +45,7 @@ foreach ($models as $class) {
     $provider->getData();
     $table = $model->tableName();
     $row = $app->db->createCommand('SHOW CREATE TABLE '.$app->db->quoteTableName($table))->queryRow();
-    $ddl[$table] = preg_replace('/AUTO_INCREMENT=\d+\b/', 'AUTO_INCREMENT=1',
-        preg_replace('/^CREATE TABLE /', 'CREATE TEMPORARY TABLE ', $row['Create Table']));
+    $ddl[$table] = isolatedTemporaryTableDdl($row['Create Table']);
 }
 echo "PASS: all 8 model mappings, live schema, search and pagination.\n";
 foreach (array('report/admin', 'users/admin', 'users/history') as $route) {
