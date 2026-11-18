@@ -1,0 +1,76 @@
+.chosen-container-multi .chosen-choices li.search-field input[type="text"]{
+	padding:10px!important;
+}
+
+.chosen-container-multi .chosen-choices{
+    border-radius: 5px;	
+    border:1px solid #ccc!important;
+}
+.chosen-container-multi .chosen-choices li.search-field input[type="text"]{
+	height: 30px!important;
+}
+.chosen-container-active .chosen-choices{
+    border: 1px solid #ccc!important;
+    box-shadow: 0 0!important;
+}
+.chosen-container-single .chosen-single{
+	height: 35px!important;
+	padding-top: 6px!important;
+}
+.chosen-container-active.chosen-with-drop .chosen-single div b{
+	background-position: 0px 10px!important;
+}
+.chosen-container-single .chosen-single div b{
+	background: url('../chosen/chosen-sprite.png') no-repeat 0px 7px!important;
+}
+.center{
+	text-align: center;
+}
+.breadcrumbs{
+	margin-top: 20px;
+}
+.table>thead>tr>th, 
+.table>tbody>tr>th, 
+.table>tfoot>tr>th, 
+.table>thead>tr>td, 
+.table>tbody>tr>td, 
+.table>tfoot>tr>td{
+	border-right: 1px solid #ddd;
+}
+.table>thead>tr>th{
+	border-top: 1px solid #ddd!important;
+}
+.table>tbody>tr:last-child>td{
+	border-bottom: 1px solid #ddd!important;
+}
+.table>thead>tr>th:last-child, 
+.table>tbody>tr>th:last-child, 
+.table>tfoot>tr>th:last-child, 
+.table>thead>tr>td:last-child, 
+.table>tbody>tr>td:last-child, 
+.table>tfoot>tr>td:last-child{
+	border-right: 0;
+}
+.errorMessage{
+	color: red;
+	padding-top: 5px;
+}
+.chosen-container-single.chosen-container-single-nosearch .chosen-search{
+    position: relative;
+    left:0;
+}
+select{
+	width:auto;
+}
+#total-no{
+	position: absolute;
+    top: 9px;
+    right: 27px;
+    text-align: center;
+    font-size: 9px;
+    padding: 2px 3px;
+    line-height: .9;
+}
+select.form-control{
+	padding: 6px 1px;
+}

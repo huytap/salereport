@@ -1,0 +1,12 @@
+@media print {
+	.sidebar,
+	.head.clearfix,
+	#breadcrumbs,
+	.button-column,
+	.filters,
+	.caret,
+	tbody tr td:last-child{display: none;}
+	a[href]:after {
+	    content: none !important;
+	}
+}
