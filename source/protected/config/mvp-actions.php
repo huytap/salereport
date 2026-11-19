@@ -3,7 +3,7 @@
 $accountRead = array('admin','view','lookup','contacts');
 $accountWrite = array_merge($accountRead,array('create','update','contactcreate','contactupdate'));
 $taskRead = array('admin','view','calendar');
-$taskWrite = array_merge($taskRead,array('create','update','complete','cancel'));
+$taskWrite = array_merge($taskRead,array('create','update','complete','cancel','start','reschedule'));
 $reminder = array('admin','summary','read');
 return array(
     'superadmin' => ActionAccess::catalog(),

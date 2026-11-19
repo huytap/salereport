@@ -3,7 +3,7 @@
     <div class="navbar-header"><a class="navbar-brand" href="<?php echo Yii::app()->createUrl('site/admin'); ?>">Ho Tram Resort</a></div>
     <ul class="nav navbar-top-links navbar-right" id="navMenu">
     <?php foreach (Yii::app()->params['menu'] as $controller=>$items):
-        if ($controller==='account' && !CustomerPolicy::ready()) { continue; }
+        if (in_array($controller,array('account','task'),true) && !CustomerPolicy::ready()) { continue; }
         if ($controller==='customerimport' && (!ActionAccess::isAll() || empty(Yii::app()->params['mvp']['legacyImportEnabled']))) { continue; }
         $allowed = ActionAccess::actions($controller);
         $visible = array_intersect_key($items,array_flip($allowed));

@@ -1,0 +1,20 @@
+<?php $titles=array('create'=>'Thêm công việc','update'=>'Sửa nội dung công việc','reschedule'=>'Đổi hạn / lịch','reopen'=>'Mở lại công việc'); $this->breadcrumbs=array('Công việc'=>array('admin'),$titles[$mode]); ?>
+<h1><?php echo $titles[$mode]; ?></h1>
+<?php $this->renderPartial('/account/_errors',array('errors'=>$errors)); ?>
+<?php if ($mode==='create'): ?>
+<?php echo CHtml::beginForm(array('create'),'get'); ?><div class="row"><div class="form-group col-md-4"><label>Khách sạn</label><?php echo CHtml::dropDownList('hotel_id',$hotelId,CHtml::listData($hotels,'id','name'),array('class'=>'form-control')); ?></div><div class="form-group col-md-4"><label>Tìm khách hàng (tối đa 100 kết quả)</label><?php echo CHtml::textField('account_q',$accountQ,array('class'=>'form-control')); ?></div></div><?php echo CHtml::submitButton('Lọc khách sạn / tên khách',array('class'=>'btn btn-default')); echo CHtml::endForm(); echo CHtml::beginForm(array('create'),'get'); echo CHtml::hiddenField('hotel_id',$hotelId); echo CHtml::hiddenField('account_q',$accountQ); ?><div class="row"><div class="form-group col-md-4"><label>Khách hàng</label><?php echo CHtml::dropDownList('account_id',$accountId,CHtml::listData($accounts,'id','name'),array('class'=>'form-control','empty'=>'Chọn sau khi lọc khách sạn')); ?></div></div><?php echo CHtml::submitButton('Chọn khách sạn / khách hàng',array('class'=>'btn btn-default')); echo CHtml::endForm(); ?>
+<?php if (!$hotelId || !$accountId): ?><p>Chọn khách sạn và khách hàng trong phạm vi được cấp để tạo việc.</p><?php return; endif; ?>
+<p>Người nhận: <?php echo $assignment && $assignment->owner?CHtml::encode($assignment->owner->fullname):'Chưa phân công — cần phân công khách hàng trước'; ?>. Muốn đổi sales, dùng bàn giao tại hồ sơ khách hàng.</p>
+<?php else: ?><p><?php echo CHtml::encode($task->code.' · '.$task->account->name.' / '.$task->hotel->name); ?></p><?php endif; ?>
+<?php echo CHtml::beginForm($mode==='create'?array('create'):array($mode,'id'=>$task->id),'post'); echo CHtml::hiddenField('request_key',$key); if ($mode==='create') { echo CHtml::hiddenField('account_id',$accountId); echo CHtml::hiddenField('hotel_id',$hotelId); if ($reportId) { echo CHtml::hiddenField('report_id',$reportId); } } else { echo CHtml::hiddenField('expected_version',$version); } ?>
+<?php if (in_array($mode,array('create','update'),true)): ?>
+<div class="form-group"><label>Tiêu đề *</label><?php echo CHtml::textField('Task[title]',$values['title'],array('class'=>'form-control','required'=>true,'maxlength'=>255)); ?></div>
+<div class="form-group"><label>Nội dung</label><?php echo CHtml::textArea('Task[description]',$values['description'],array('class'=>'form-control','rows'=>4)); ?></div>
+<div class="row"><div class="form-group col-md-4"><label>Hoạt động</label><?php echo CHtml::dropDownList('Task[action_type]',$values['action_type'],array('call'=>'Gọi điện','visit'=>'Gặp khách','entertainment'=>'Tiếp khách','site_inspection'=>'Tham quan','send_quote'=>'Gửi báo giá','other'=>'Khác'),array('class'=>'form-control')); ?></div>
+<div class="form-group col-md-4"><label>Ưu tiên</label><?php echo CHtml::dropDownList('Task[priority]',$values['priority'],array('normal'=>'Bình thường','high'=>'Cao'),array('class'=>'form-control')); ?></div>
+<div class="form-group col-md-4"><label>Người liên hệ</label><?php echo CHtml::dropDownList('Task[contact_person_id]',isset($values['contact_person_id'])?$values['contact_person_id']:'',CHtml::listData($contacts,'id',function($p){return trim($p->first_name.' '.$p->last_name);}),array('class'=>'form-control','empty'=>'Không chọn')); ?></div></div>
+<div class="form-group"><label>Địa điểm</label><?php echo CHtml::textField('Task[location]',$values['location'],array('class'=>'form-control','maxlength'=>255)); ?></div>
+<?php endif; ?>
+<?php if ($mode!=='update') { $this->renderPartial('_schedule',compact('values','mode')); } ?>
+<?php echo CHtml::submitButton('Lưu công việc',array('class'=>'btn btn-primary')); echo CHtml::endForm(); ?>
+<p><?php echo CHtml::link('Quay lại',$mode==='create'?array('admin'):array('view','id'=>$task->id)); ?></p>

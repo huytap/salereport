@@ -9,4 +9,5 @@ $config['modules'] = array();
 $config['params']['mvp'] = require dirname(__FILE__).'/mvp.php';
 $config['params']['mvp']['legacyImportEnabled'] = true;
 $config['params']['mvp']['customerWrite'] = true; // WP04 is isolated-test only.
+$config['params']['mvp']['taskWrite'] = true; // WP05 only on guarded test DB.
 return $config;

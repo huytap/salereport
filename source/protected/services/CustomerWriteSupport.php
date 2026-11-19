@@ -36,7 +36,7 @@ class CustomerWriteSupport
         if (is_array($value)) { if (array_keys($value)!==range(0,count($value)-1)) { ksort($value); } foreach ($value as &$v) { $v=self::canonical($v); } unset($v); }
         return $value;
     }
-    public static function mutate($operation,$key,array $payload,$callback)
+    public static function mutate($operation,$key,array $payload,$callback,$replayGuard=null)
     {
         if (!is_string($key) || !preg_match('/^[a-zA-Z0-9_-]{16,64}$/D',$key)) { throw new CHttpException(400,'Thiếu mã yêu cầu hợp lệ.'); }
         $db=Yii::app()->db; $actor=Yii::app()->user->id;
@@ -52,6 +52,7 @@ class CustomerWriteSupport
                     if ($old['operation']!==$operation || !hash_equals($old['payload_hash'],$hash)) { throw new CHttpException(409,'Mã yêu cầu đã được dùng với nội dung khác.'); }
                     $result=json_decode($old['result_json'],true);
                     if (!Account::model()->findByPk($result['account_id'],CustomerPolicy::scopeCriteria('account'))) { throw new CHttpException(404,'Không tìm thấy hồ sơ.'); }
+                    if ($replayGuard!==null) { $replayGuard($result); }
                     $result['replayed']=true;
                 } else {
                     $result=$callback();

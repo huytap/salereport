@@ -1,5 +1,6 @@
 <?php
 return array(
+    'task' => 'Công việc',
     'account' => 'Khách hàng',
     'customerimport' => 'Chuyển đổi hồ sơ',
 	"contact" => 'Contact DB',
