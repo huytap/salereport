@@ -1,0 +1,40 @@
+<?php $this->breadcrumbs=array('Khách hàng'=>array('admin'),$account->name); $write=!empty(Yii::app()->params['mvp']['customerWrite']); ?>
+<h1><?php echo CHtml::encode($account->name); ?></h1>
+<p><?php echo CHtml::encode($account->code); ?> · <?php echo $account->status==='active'?'Đang hoạt động':'Đã lưu trữ'; ?> · Phiên bản <?php echo (int)$account->lock_version; ?></p>
+<p><?php if ($write && $account->status==='active' && ActionAccess::can('account','update')) { echo CHtml::link('Cập nhật hồ sơ',array('update','id'=>$account->id),array('class'=>'btn btn-default')); } ?>
+<?php if ($write && ActionAccess::can('account','assignpreview') && AccountReadService::hotels(true)) { echo CHtml::link('Phân công / bàn giao',array('assignpreview','id'=>$account->id),array('class'=>'btn btn-default')); } ?></p>
+<ul class="nav nav-tabs">
+<?php $tabs=array('overview'=>'Tổng quan','contacts'=>'Người liên hệ'); if (ActionAccess::can('report','admin')) { $tabs['reports']='Sales Report'; } if (ActionAccess::can('task','admin')) { $tabs['tasks']='Công việc'; } if (ActionAccess::isAll()) { $tabs['sources']='Nguồn cũ'; $tabs['audit']='Lịch sử thay đổi'; }
+foreach ($tabs as $key=>$label): ?><li<?php echo $tab===$key?' class="active"':''; ?>><?php echo CHtml::link($label,array('view','id'=>$account->id,'tab'=>$key)); ?></li><?php endforeach; ?></ul>
+<?php if ($tab==='overview'): ?>
+<h2>Thông tin doanh nghiệp</h2>
+<dl class="dl-horizontal"><?php foreach (array('segment'=>'Phân khúc','biz_scope'=>'Lĩnh vực','website'=>'Website','email'=>'Email','phone'=>'Điện thoại','building'=>'Tòa nhà','address_1'=>'Địa chỉ 1','address_2'=>'Địa chỉ 2','address_3'=>'Địa chỉ 3','city'=>'Thành phố','country'=>'Quốc gia','source'=>'Nguồn khách','fit_series'=>'FIT / Series','dmc'=>'DMC','notes'=>'Ghi chú') as $k=>$label): ?><dt><?php echo CHtml::encode($label); ?></dt><dd><?php echo nl2br(CHtml::encode($account->$k)); ?></dd><?php endforeach; ?><dt>Thị trường</dt><dd><?php echo CHtml::encode(implode(', ',$markets)); ?></dd></dl>
+<h2>Phụ trách theo khách sạn trong phạm vi truy cập</h2>
+<table class="table table-striped"><thead><tr><th>Khách sạn</th><th>Người phụ trách</th></tr></thead><tbody>
+<?php foreach ($assignments as $a): ?><tr><td><?php echo CHtml::encode($a['hotel_name']); ?></td><td><?php echo $a['owner_user_id']?CHtml::encode($a['owner_name']).' (#'.(int)$a['owner_user_id'].')':'Chưa phân công'; ?></td></tr><?php endforeach; ?></tbody></table>
+<?php if ($write && $account->status==='active' && ActionAccess::can('account','archive')): ?><details><summary>Lưu trữ hồ sơ khách hàng</summary>
+<p>Chỉ thực hiện khi không còn việc mở và có quyền quản lý toàn bộ khách sạn của hồ sơ.</p>
+<?php echo CHtml::beginForm(array('archive','id'=>$account->id),'post'); echo CHtml::hiddenField('request_key',bin2hex(random_bytes(16))); echo CHtml::hiddenField('expected_version',$account->lock_version); echo CHtml::textArea('reason','',array('class'=>'form-control','required'=>true,'placeholder'=>'Lý do lưu trữ','maxlength'=>4000)); echo CHtml::submitButton('Lưu trữ hồ sơ',array('class'=>'btn btn-warning')); echo CHtml::endForm(); ?></details><?php endif; ?>
+<?php elseif ($tab==='contacts'): ?>
+<h2>Người liên hệ</h2>
+<?php if ($write && $account->status==='active' && ActionAccess::can('account','contactcreate')) { echo CHtml::link('Thêm người liên hệ',array('contactcreate','id'=>$account->id),array('class'=>'btn btn-primary')); } ?>
+<table class="table table-striped"><thead><tr><th>Họ tên / Chức vụ</th><th>Email / Điện thoại</th><th>Chi tiết</th><th>Thao tác</th></tr></thead><tbody>
+<?php foreach ($rows as $p): ?><tr><td><?php echo CHtml::encode(trim($p->title.' '.$p->first_name.' '.$p->last_name)); ?><br><?php echo CHtml::encode($p->position); ?><br><?php echo $p->status==='active'?'Đang hoạt động':'Đã lưu trữ'; ?></td><td><?php echo CHtml::encode($p->email); ?><br><?php echo CHtml::encode($p->phone.' / '.$p->mobile); ?></td><td><?php echo CHtml::encode($p->dob.' · '.$p->contact_role); ?><br><?php echo nl2br(CHtml::encode($p->notes)); ?></td><td>
+<?php if ($write && $account->status==='active' && $p->status==='active' && ActionAccess::can('account','contactupdate')) { echo CHtml::link('Sửa',array('contactupdate','id'=>$account->id,'person_id'=>$p->id)); } ?>
+<?php if ($write && $p->status==='active' && ActionAccess::can('account','contactarchive')): ?><details><summary>Lưu trữ</summary><?php echo CHtml::beginForm(array('contactarchive','id'=>$account->id,'person_id'=>$p->id),'post'); echo CHtml::hiddenField('request_key',bin2hex(random_bytes(16))); echo CHtml::hiddenField('expected_version',$p->lock_version); echo CHtml::textArea('reason','',array('class'=>'form-control','required'=>true,'placeholder'=>'Lý do lưu trữ','maxlength'=>4000)); echo CHtml::submitButton('Xác nhận lưu trữ',array('class'=>'btn btn-warning')); echo CHtml::endForm(); ?></details><?php endif; ?>
+</td></tr><?php endforeach; ?></tbody></table>
+<?php elseif ($tab==='reports'): ?>
+<h2>Sales Report trong phạm vi khách sạn</h2><table class="table table-striped"><thead><tr><th>Mã báo cáo</th><th>Khách sạn</th><th>Nội dung</th><th>Người tạo lịch sử</th></tr></thead><tbody>
+<?php foreach ($rows as $r): ?><tr><td><?php echo ActionAccess::can('report','view')?CHtml::link('#'.$r->id,array('/report/view','id'=>$r->id)):'#'.(int)$r->id; ?></td><td>#<?php echo (int)$r->hotel_id; ?></td><td><?php echo nl2br(CHtml::encode(mb_substr($r->report,0,1000))); ?></td><td>#<?php echo (int)$r->added_by; ?></td></tr><?php endforeach; ?></tbody></table>
+<?php elseif ($tab==='tasks'): ?>
+<h2>Công việc trong phạm vi khách sạn</h2><p>Ngày giờ chính xác hiển thị theo UTC; việc hạn ngày giữ ngày địa phương.</p>
+<table class="table table-striped"><thead><tr><th>Công việc</th><th>Khách sạn</th><th>Hạn</th><th>Trạng thái</th><th>Người phụ trách</th></tr></thead><tbody>
+<?php foreach ($rows as $t): ?><tr><td><?php echo CHtml::encode($t->code.' · '.$t->title); ?></td><td>#<?php echo (int)$t->hotel_id; ?></td><td><?php echo CHtml::encode($t->due_mode==='date'?$t->due_date.' ('.$t->timezone.')':$t->due_at_utc.' UTC'); ?></td><td><?php echo CHtml::encode($t->status); echo $t->isOverdue()?' · Quá hạn':''; ?></td><td>#<?php echo (int)$t->assignee_user_id; ?></td></tr><?php endforeach; ?></tbody></table>
+<?php elseif ($tab==='sources'): ?>
+<h2>Liên kết dữ liệu cũ</h2><table class="table table-striped"><thead><tr><th>Nguồn</th><th>Mã nguồn</th><th>Trạng thái</th><th>Đợt nhập</th><th>Người đối chiếu</th></tr></thead><tbody>
+<?php foreach ($rows as $s): ?><tr><td><?php echo CHtml::encode($s->source_type); ?></td><td><?php echo CHtml::encode($s->source_id); ?></td><td><?php echo CHtml::encode($s->resolution_state); ?></td><td><?php echo $s->import_batch_id && ActionAccess::can('customerimport','view')?CHtml::link('#'.$s->import_batch_id,array('/customerimport/view','id'=>$s->import_batch_id)):'#'.(int)$s->import_batch_id; ?></td><td>#<?php echo (int)$s->reviewed_by; ?></td></tr><?php endforeach; ?></tbody></table>
+<?php elseif ($tab==='audit'): ?>
+<h2>Lịch sử thay đổi hồ sơ và phân công</h2>
+<?php foreach ($rows as $e): ?><details><summary><?php echo CHtml::encode($e->occurred_at_utc.' UTC · '.$e->entity_type.' #'.$e->entity_id.' · '.$e->event_type.' · actor #'.$e->actor_user_id); ?></summary><p><?php echo CHtml::encode($e->reason); ?></p><strong>Trước</strong><pre><?php echo CHtml::encode($e->before_json); ?></pre><strong>Sau</strong><pre><?php echo CHtml::encode($e->after_json); ?></pre></details><?php endforeach; ?>
+<?php endif; ?>
+<?php if ($tab!=='overview'): if (!$rows): ?><p>Chưa có dữ liệu trong phạm vi truy cập.</p><?php endif; $this->renderPartial('_pager',array('page'=>$page,'total'=>$total,'route'=>array('view','id'=>$account->id,'tab'=>$tab))); endif; ?>

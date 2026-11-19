@@ -85,10 +85,18 @@ class UsersController extends ManagementController
         if (Yii::app()->request->isPostRequest) {
             $grants=Yii::app()->request->getPost('grants',array());
             if (!is_array($grants)) { throw new CHttpException(400,'Invalid grants.'); }
-            HotelAccessService::replace($id,$grants,Yii::app()->request->getPost('reason',''));
+            if (Yii::app()->request->getPost('ui')==='1') {
+                $grants=array(); $scopes=Yii::app()->request->getPost('scopes',array());
+                if (!is_array($scopes)) { throw new CHttpException(400,'Invalid scopes.'); }
+                foreach ($scopes as $hotel=>$scope) { if ($scope!=='') { $grants[]=array('hotel_id'=>(string)$hotel,'scope_level'=>$scope); } }
+            }
+            HotelAccessService::replace($id,$grants,Yii::app()->request->getPost('reason',''),Yii::app()->request->getPost('ui')==='1'?Yii::app()->request->getPost('expected_hash',''):null);
+            if (Yii::app()->request->getPost('ui')==='1') { $this->redirect(array('hotelaccess','id'=>$id,'format'=>'html')); return; }
         }
-        header('Content-Type: application/json; charset=UTF-8');
         $rows=Yii::app()->db->createCommand('SELECT hotel_id,scope_level FROM crm_user_hotel_access WHERE user_id=:id ORDER BY hotel_id')->queryAll(true,array(':id'=>$id));
-        echo CJSON::encode($rows);
+        if (Yii::app()->request->getQuery('format')==='html') {
+            $this->render('hotelaccess',array('model'=>ActionAccess::user($id),'grants'=>$rows,'hotels'=>AccountReadService::hotels())); return;
+        }
+        header('Content-Type: application/json; charset=UTF-8'); echo CJSON::encode($rows);
     }
 }

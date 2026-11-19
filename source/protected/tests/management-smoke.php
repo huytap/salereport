@@ -42,6 +42,7 @@ $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['HTTP_HOST'] = 'crm.hthub.local';
 $_SERVER['REQUEST_URI'] = '/';
 $config = require $root.'/protected/config/test.php';
+$config['params']['mvp']['customerWrite']=false; // Exercise pre-cutover legacy compatibility.
 $config['components']['user'] = array('class'=>'ManagementSmokeUser');
 $config['components']['request'] = array('class'=>'ManagementSmokeRequest','enableCsrfValidation'=>true);
 $config['components']['log']['routes'] = array();

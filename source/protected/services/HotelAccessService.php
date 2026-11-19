@@ -2,7 +2,7 @@
 
 class HotelAccessService
 {
-    public static function replace($userId, array $grants, $reason)
+    public static function replace($userId, array $grants, $reason, $expectedHash=null)
     {
         ActionAccess::requireAction('users','hotelaccess');
         if (!ActionAccess::isAll()) { throw new CHttpException(403,'All scope is required to manage Hotel grants.'); }
@@ -13,7 +13,8 @@ class HotelAccessService
             if (!is_array($grant) || !isset($grant['hotel_id'],$grant['scope_level']) || !is_scalar($grant['hotel_id']) || !ctype_digit((string)$grant['hotel_id'])
                 || !in_array($grant['scope_level'],array('own','hotel'),true) || isset($desired[(int)$grant['hotel_id']])) { throw new CHttpException(400,'Invalid or duplicate Hotel grant.'); }
             $hotel=Hotel::model()->findByPk($grant['hotel_id']);
-            if (!$hotel || $hotel->status!=='active') { throw new CHttpException(400,'Active Hotel is required.'); }
+            $existing=UserHotelAccess::model()->findByPk(array('user_id'=>$user->id,'hotel_id'=>$grant['hotel_id']));
+            if (!$hotel || ($hotel->status!=='active' && (!$existing || $existing->scope_level!==$grant['scope_level']))) { throw new CHttpException(400,'Active Hotel is required for a new or changed grant.'); }
             $desired[(int)$hotel->id]=$grant['scope_level'];
         }
         $db=Yii::app()->db;
@@ -26,6 +27,7 @@ class HotelAccessService
             // Stable Hotel lock ordering serializes concurrent full replacement on the same target.
             $db->createCommand('SELECT id FROM crm_hotel ORDER BY id FOR UPDATE')->queryAll();
             $before=$db->createCommand('SELECT hotel_id,scope_level FROM crm_user_hotel_access WHERE user_id=:id ORDER BY hotel_id FOR UPDATE')->queryAll(true,array(':id'=>$user->id));
+            if ($expectedHash!==null && (!is_string($expectedHash) || !preg_match('/^[a-f0-9]{64}$/D',$expectedHash) || !hash_equals(hash('sha256',CJSON::encode($before)),$expectedHash))) { throw new CHttpException(409,'Hotel grants changed; reload before saving.'); }
             foreach ($before as $old) {
                 if (isset($desired[(int)$old['hotel_id']])) { continue; }
                 $owned=$db->createCommand("SELECT COUNT(*) FROM crm_account_hotel WHERE owner_user_id=:user AND hotel_id=:hotel AND status='active'")->queryScalar(array(':user'=>$user->id,':hotel'=>$old['hotel_id']));

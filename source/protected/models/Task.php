@@ -74,13 +74,19 @@ class Task extends MvpActiveRecord
         if (!$assignment || ($open && ($assignment->status !== 'active' || (string)$assignment->owner_user_id !== (string)$this->assignee_user_id))) {
             $this->addError('assignee_user_id','Task must belong to an active Account/Hotel and its current owner.');
         }
-        if ($this->contact_person_id && $this->contactPerson && (string)$this->contactPerson->account_id !== (string)$this->account_id) {
+        // Workflow validation must read current state, rather than AR's cached relations.
+        $account=Account::model()->findByPk($this->account_id);
+        $person=$this->contact_person_id?ContactPerson::model()->findByPk($this->contact_person_id):null;
+        $report=$this->report_id?Report::model()->findByPk($this->report_id):null;
+        $assignee=Users::model()->findByPk($this->assignee_user_id);
+        if ($person && (string)$person->account_id !== (string)$this->account_id) {
             $this->addError('contact_person_id','Contact must belong to this account.');
         }
-        if ($this->report_id && $this->report && ((string)$this->report->account_id !== (string)$this->account_id || (string)$this->report->hotel_id !== (string)$this->hotel_id)) {
+        if ($report && ((string)$report->account_id !== (string)$this->account_id || (string)$report->hotel_id !== (string)$this->hotel_id)) {
             $this->addError('report_id','Report must belong to this account and hotel.');
         }
-        if ($open && $this->assignee && $this->assignee->status !== 'A') { $this->addError('assignee_user_id','Assignee must be active.'); }
+        if ($open && (!$account || $account->status!=='active' || ($this->contact_person_id && (!$person || $person->status!=='active')))) { $this->addError('account_id','Open tasks require an active account and contact person.'); }
+        if ($open && $assignee && $assignee->status !== 'A') { $this->addError('assignee_user_id','Assignee must be active.'); }
     }
 
     public function isOverdue($nowUtc = null)

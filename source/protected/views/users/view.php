@@ -7,3 +7,5 @@ $this->breadcrumbs = array('Users' => array('admin'), $model->username);
     'attributes' => array('username', 'fullname', 'email', 'cellphone', 'status', 'roles',
         'hotel', 'group', 'remarks', 'added_date', 'updated_date', 'last_login_date'),
 )); ?>
+
+<?php if (ActionAccess::isAll() && ActionAccess::can('users','hotelaccess') && $model->status==='A' && CustomerPolicy::ready()) { echo CHtml::link('Quản lý quyền khách sạn',array('hotelaccess','id'=>$model->id,'format'=>'html'),array('class'=>'btn btn-default')); } ?>

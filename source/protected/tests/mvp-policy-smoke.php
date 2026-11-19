@@ -31,6 +31,7 @@ $root=dirname(__DIR__,2);
 $_SERVER['SCRIPT_FILENAME']=$root.'/index.php'; $_SERVER['SCRIPT_NAME']='/index.php';
 $_SERVER['HTTP_HOST']='crm.test.local'; $_SERVER['REQUEST_URI']='/'; $_SERVER['REQUEST_METHOD']='GET';
 $config=require __DIR__.'/../config/test.php';
+$config['params']['mvp']['customerWrite']=false; // Exercise pre-cutover legacy compatibility.
 $config['components']['user']=array('class'=>'PolicyUser');
 $config['components']['request']=array('class'=>'PolicyRequest','enableCsrfValidation'=>true);
 $app=Yii::createApplication('PolicyApp',$config); $db=$app->db; $db->setActive(true);

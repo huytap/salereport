@@ -1,5 +1,6 @@
 <?php
 return array(
+    'account' => array('admin'=>'Danh sách khách hàng','create'=>'Thêm khách hàng'),
     'customerimport' => array('admin'=>'Preview và mapping'),
 	"contact" => array(
 		'admin' => 'All', 

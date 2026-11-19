@@ -3,11 +3,12 @@
     <div class="navbar-header"><a class="navbar-brand" href="<?php echo Yii::app()->createUrl('site/admin'); ?>">Ho Tram Resort</a></div>
     <ul class="nav navbar-top-links navbar-right" id="navMenu">
     <?php foreach (Yii::app()->params['menu'] as $controller=>$items):
+        if ($controller==='account' && !CustomerPolicy::ready()) { continue; }
         if ($controller==='customerimport' && (!ActionAccess::isAll() || empty(Yii::app()->params['mvp']['legacyImportEnabled']))) { continue; }
         $allowed = ActionAccess::actions($controller);
         $visible = array_intersect_key($items,array_flip($allowed));
         // Creation/import through unsafe legacy forms is available only to All during transition.
-        if (!ActionAccess::isAll() && in_array($controller,array('contact','report'),true)) { unset($visible['create'],$visible['import']); }
+        if ((!ActionAccess::isAll() || !empty(Yii::app()->params['mvp']['customerWrite'])) && in_array($controller,array('contact','report'),true)) { unset($visible['create'],$visible['import']); }
         if (!$visible) { continue; }
     ?>
         <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo CHtml::encode(Yii::app()->params['module'][$controller]); ?> <i class="fa fa-caret-down"></i></a>
