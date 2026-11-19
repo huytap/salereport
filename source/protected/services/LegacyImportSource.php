@@ -21,7 +21,7 @@ class LegacyImportSource
     public static function hash(array $raw, $type)
     {
         if ($type==='report') {
-            foreach (array('account_id','contact_person_id','hotel_id','identity_state','lock_version','client_request_key') as $key) { unset($raw[$key]); }
+            foreach (array('account_id','contact_person_id','hotel_id','identity_state','lock_version','client_request_key','snapshot_json','created_at_utc','updated_at_utc') as $key) { unset($raw[$key]); }
         }
         ksort($raw);
         foreach ($raw as &$value) { if ($value!==null) { $value=(string)$value; } } unset($value);

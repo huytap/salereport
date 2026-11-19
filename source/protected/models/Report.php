@@ -19,7 +19,7 @@ class Report extends CrmActiveRecord
     {
         $rules = parent::rules();
         // Schema may not yet be migrated on the live web database. Never mass-assign MVP IDs/state.
-        $protected = array_intersect(array('account_id','contact_person_id','hotel_id','identity_state','lock_version','client_request_key'), $this->attributeNames());
+        $protected = array_intersect(array('account_id','contact_person_id','hotel_id','identity_state','lock_version','client_request_key','snapshot_json','created_at_utc','updated_at_utc'), $this->attributeNames());
         if ($protected) { $rules[] = array(implode(',', $protected), 'unsafe'); }
         return $rules;
     }

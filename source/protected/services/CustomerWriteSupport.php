@@ -62,7 +62,7 @@ class CustomerWriteSupport
                 if ($owns) { $tx->commit(); } else { $db->createCommand('RELEASE SAVEPOINT '.$sp)->execute(); }
                 return $result;
             } catch (Exception $e) {
-                if ($owns) { $tx->rollback(); } else { $db->createCommand('ROLLBACK TO SAVEPOINT '.$sp)->execute(); $db->createCommand('RELEASE SAVEPOINT '.$sp)->execute(); }
+                if ($owns) { $tx->rollback(); } elseif ($db->getPdoInstance()->inTransaction()) { $db->createCommand('ROLLBACK TO SAVEPOINT '.$sp)->execute(); $db->createCommand('RELEASE SAVEPOINT '.$sp)->execute(); }
                 throw $e;
             }
         } finally { $db->createCommand('SELECT RELEASE_LOCK(:key)')->queryScalar(array(':key'=>$lock)); }

@@ -96,19 +96,45 @@ class TaskService
         $reportId=$reportId===null || $reportId===''?null:CustomerWriteSupport::id($reportId);
         self::context($accountId,$hotelId,'create');
         return self::mutate('task_create',$key,array($accountId,$hotelId,$fields,$allowOverdue,$reason,$assigneeId,$reportId),function()use($accountId,$hotelId,$fields,$key,$allowOverdue,$reason,$assigneeId,$reportId){
-            self::authorize('create'); $assignment=self::context($accountId,$hotelId,'create',true);
-            if (!$assignment->owner_user_id) { throw new CHttpException(409,'Cần phân công owner trước khi tạo việc.'); }
-            self::owner($assignment->owner_user_id,$hotelId);
-            if ($assigneeId!==null && (string)$assigneeId!==(string)$assignment->owner_user_id) { throw new CHttpException(409,'Người nhận phải là owner hiện tại; hãy bàn giao khách hàng nếu cần đổi người.'); }
-            if ($reportId!==null) {
-                ActionAccess::requireAction('report','view'); $report=CustomerWriteSupport::current('Report','reports','id=:id',array(':id'=>$reportId));
-                if ($report->identity_state!=='linked' || (string)$report->account_id!==(string)$accountId || (string)$report->hotel_id!==(string)$hotelId) { throw new CHttpException(404,'Báo cáo không thuộc hồ sơ/khách sạn này.'); }
-            }
-            $m=new Task; $m->setAttributes($fields,false); $m->account_id=$accountId; $m->hotel_id=$hotelId; $m->report_id=$reportId; $m->assignee_user_id=$assignment->owner_user_id;
-            $m->code='TSK-'.strtoupper(bin2hex(random_bytes(10))); $m->client_request_key=$key;
-            self::contact($m); self::validate($m,$allowOverdue,$reason); CustomerWriteSupport::save($m); self::reminder($m,false); CustomerWriteSupport::audit('task',$m->id,'created',null,$m->attributes,$reason);
+            $m=self::prepareCreate($accountId,$hotelId,$fields,$key,$allowOverdue,$reason,$assigneeId,$reportId);
+            self::persistPrepared($m,$allowOverdue,$reason);
             return self::result($m);
         },function($result){ self::access($result['task_id'],'create'); });
+    }
+    private static function requireTransaction()
+    {
+        $tx=Yii::app()->db->getCurrentTransaction();
+        if (!$tx || !$tx->active || !Yii::app()->db->getPdoInstance()->inTransaction()) { throw new CException('Prepared task writes require an active caller transaction.'); }
+    }
+    /** Internal composition API: validate before Report/Task/Reminder inserts. */
+    public static function prepareCreate($accountId,$hotelId,array $fields,$key,$allowOverdue=false,$reason='',$assigneeId=null,$reportId=null)
+    {
+        $fields=CustomerWriteSupport::fields(TaskSchedule::input($fields),array_merge(self::contentFields(),self::scheduleFields()));
+        self::requireTransaction(); self::authorize('create'); $assignment=self::context($accountId,$hotelId,'create',true);
+        if (!$assignment->owner_user_id) { throw new CHttpException(409,'Cần phân công owner trước khi tạo việc.'); }
+        self::owner($assignment->owner_user_id,$hotelId);
+        if ($assigneeId!==null && (string)$assigneeId!==(string)$assignment->owner_user_id) { throw new CHttpException(409,'Người nhận phải là owner hiện tại; hãy bàn giao khách hàng nếu cần đổi người.'); }
+        if ($reportId!==null) {
+            ActionAccess::requireAction('report','view'); $report=CustomerWriteSupport::current('Report','reports','id=:id',array(':id'=>$reportId));
+            if ($report->identity_state!=='linked' || (string)$report->account_id!==(string)$accountId || (string)$report->hotel_id!==(string)$hotelId) { throw new CHttpException(404,'Báo cáo không thuộc hồ sơ/khách sạn này.'); }
+        }
+        $m=new Task; $m->setAttributes($fields,false); $m->account_id=$accountId; $m->hotel_id=$hotelId; $m->report_id=$reportId; $m->assignee_user_id=$assignment->owner_user_id;
+        $m->code='TSK-'.strtoupper(bin2hex(random_bytes(10))); $m->client_request_key=$key;
+        self::contact($m); self::validate($m,$allowOverdue,$reason); return $m;
+    }
+    public static function persistPrepared(Task $m,$allowOverdue=false,$reason='')
+    {
+        self::requireTransaction(); self::authorize('create');
+        if (!$m->isNewRecord) { throw new CException('Only a new prepared Task may be inserted.'); }
+        $assignment=self::context($m->account_id,$m->hotel_id,'create',true); self::owner($assignment->owner_user_id,$m->hotel_id);
+        if ((string)$assignment->owner_user_id!==(string)$m->assignee_user_id) { throw new CHttpException(409,'Owner đã thay đổi trước khi ghi công việc.'); }
+        if ($m->report_id!==null) {
+            $report=CustomerWriteSupport::current('Report','reports','id=:id',array(':id'=>$m->report_id));
+            if ($report->identity_state!=='linked' || (string)$report->account_id!==(string)$m->account_id || (string)$report->hotel_id!==(string)$m->hotel_id) { throw new CHttpException(404,'Báo cáo không thuộc hồ sơ/khách sạn này.'); }
+        }
+        self::contact($m); self::validate($m,$allowOverdue,$reason); CustomerWriteSupport::save($m); self::reminder($m,false);
+        CustomerWriteSupport::audit('task',$m->id,'created',null,$m->attributes,$reason);
+        return self::result($m);
     }
     private static function change($action,$id,$expected,$key,array $fields,$note,$allowOverdue)
     {

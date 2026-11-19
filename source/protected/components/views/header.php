@@ -9,6 +9,8 @@
         $visible = array_intersect_key($items,array_flip($allowed));
         // Creation/import through unsafe legacy forms is available only to All during transition.
         if ((!ActionAccess::isAll() || !empty(Yii::app()->params['mvp']['customerWrite'])) && in_array($controller,array('contact','report'),true)) { unset($visible['create'],$visible['import']); }
+        if ($controller==='report' && !empty(Yii::app()->params['mvp']['reportWrite'])) { unset($visible['import']); }
+        if ($controller==='report' && !empty(Yii::app()->params['mvp']['reportWrite']) && ActionAccess::can('report','create') && isset($items['create'])) { $visible['create']=$items['create']; }
         if (!$visible) { continue; }
     ?>
         <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo CHtml::encode(Yii::app()->params['module'][$controller]); ?> <i class="fa fa-caret-down"></i></a>

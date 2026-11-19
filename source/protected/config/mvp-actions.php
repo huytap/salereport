@@ -8,12 +8,12 @@ $reminder = array('admin','summary','read');
 return array(
     'superadmin' => ActionAccess::catalog(),
     'admin' => array(
-        'contact'=>array('admin','view'), 'report'=>array('admin','view'),
+        'contact'=>array('admin','view'), 'report'=>array('admin','view','create','update'),
         'account'=>array_merge($accountWrite,array('archive','assign','contactarchive','assignpreview')),
         'task'=>array_merge($taskWrite,array('reopen')), 'reminder'=>$reminder,
         'customerimport'=>array('admin','view','preview','commit'),
     ),
-    'users' => array('contact'=>array('admin','view'),'report'=>array('admin','view'),
+    'users' => array('contact'=>array('admin','view'),'report'=>array('admin','view','create','update'),
         'account'=>$accountWrite,'task'=>$taskWrite,'reminder'=>$reminder),
     'reservation' => array('contact'=>array('admin','view'),'account'=>$accountRead),
     'fo' => array(),

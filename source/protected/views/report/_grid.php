@@ -52,7 +52,7 @@ $this->widget('booster.widgets.TbJsonGridView', array(
             'name' => 'report',
             'headerHtmlOptions' => array('width' => 350),
             'value'=> function($data){
-                return str_replace("\n", '<br>', $data->report);
+                return nl2br(CHtml::encode($data->report));
             },
             'type' => 'raw'
         ),
