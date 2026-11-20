@@ -50,6 +50,8 @@ Các suite migration cũ WP06/WP07/WP08 có tiền điều kiện phiên bản r
 
 ## 4. Diễn tập UAT tự động và UAT nghiệp vụ
 
+Cập nhật 20/11/2026: tác nhân kiểm thử đã thực hiện **9/9 luồng bằng trình duyệt trên DB giả riêng**, sửa lỗi và hồi quy 21/21 bước (955 assertions). [Kết quả, phạm vi và ảnh minh chứng](wp09-browser-uat-va-ket-qua-nghiem-thu.md). Cột ký xác nhận bên dưới vẫn chờ chủ nghiệp vụ; kết quả browser không tự điền thay người duyệt.
+
 `mvp-pilot-acceptance.php` dùng user/role giả đã commit để worker process khác đọc được, đi xuyên service và một số controller/render HTML/CSRF. Có hai Contact cùng email, Report với ba Task, inbox người nhận, version conflict, bàn giao việc mở, URL/lookup/export ngoài quyền, replay nguồn cũ, worker tạm dừng/chạy lại, và cutover → closed → recovery. Tất cả dữ liệu thử được dọn; không phải một bộ dữ liệu demo được giữ để người thật đăng nhập.
 
 Người nghiệp vụ dùng DB staging khác (ví dụ `sale_report_mvp_test_pilot_manual`) với snapshot đã ẩn danh hoặc fixture được đồng ý; không dùng chung DB tự động. Cấp người dùng test và Hotel/action theo chính sách thật. Mở qua `source/index-test.php` trên web server local/staging đã cấu hình, không mở entry point vận hành để thử ghi. Lưu ảnh/video, thời điểm, actor, Hotel, ID Account/Report/Task và mã lỗi cho mỗi tình huống; không đưa dữ liệu khách thật vào issue công khai.

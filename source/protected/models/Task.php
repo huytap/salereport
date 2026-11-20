@@ -47,7 +47,7 @@ class Task extends MvpActiveRecord
         if ($this->kind === 'appointment') {
             if (!self::validDate($this->starts_at_utc,'Y-m-d H:i:s') || !self::validDate($this->ends_at_utc,'Y-m-d H:i:s')
                 || $this->ends_at_utc <= $this->starts_at_utc || $this->due_mode !== 'datetime' || $this->due_at_utc !== $this->ends_at_utc) {
-                $this->addError('starts_at_utc','Appointments require ordered start/end times and a deadline equal to the end.');
+                $this->addError('starts_at_utc','Cuộc hẹn cần giờ bắt đầu trước giờ kết thúc; giờ đến hạn phải bằng giờ kết thúc.');
             }
         } elseif ($this->starts_at_utc !== null || $this->ends_at_utc !== null) {
             $this->addError('starts_at_utc','Only appointments have start/end times.');

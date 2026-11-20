@@ -144,6 +144,11 @@ try {
     $apiSchedule=array('kind'=>'appointment','due_mode'=>'datetime','due_date'=>null,'due_at_local'=>'2030-01-09T11:00','starts_at_local'=>'2030-01-09T10:00','ends_at_local'=>'2030-01-09T11:00','timezone'=>'Asia/Ho_Chi_Minh');
     $apiChanged=CJSON::decode(httpTask('reschedule',array('id'=>$appt->id,'format'=>'json'),array('request_key'=>tk(),'expected_version'=>2,'reason'=>'HTTP changed schedule','Task'=>$apiSchedule),'POST'));
     tcheck($apiChanged['version']===3 && $apiChanged['schedule_version']===2,'Reschedule HTTP endpoint');
+    $conflictKey=tk(); $pendingSchedule=$apiSchedule; $pendingSchedule['due_at_local']='2030-01-10T11:00'; $pendingSchedule['starts_at_local']='2030-01-10T10:00'; $pendingSchedule['ends_at_local']='2030-01-10T11:00';
+    $conflictHtml=httpTask('reschedule',array('id'=>$appt->id),array('request_key'=>$conflictKey,'expected_version'=>2,'reason'=>'Stale browser input','Task'=>$pendingSchedule),'POST');
+    tcheck(http_response_code()===409 && strpos($conflictHtml,'Mở phiên bản mới để đối chiếu')!==false && strpos($conflictHtml,'Stack Trace')===false,'HTML stale form is recoverable without debug output');
+    tcheck(strpos($conflictHtml,$conflictKey)!==false && strpos($conflictHtml,'2030-01-10T11:00')!==false && strpos($conflictHtml,'disabled="disabled"')!==false,'Stale browser values/key retained with save disabled');
+    tcheck((int)Task::model()->findByPk($appt->id)->lock_version===3 && Task::model()->findByPk($appt->id)->due_at_utc==='2030-01-09 04:00:00','HTML conflict never overwrites current schedule');
     $injection=CJSON::decode(httpTask('update',array('id'=>$appt->id,'format'=>'json'),array('request_key'=>tk(),'expected_version'=>3,'Task'=>array('status'=>'completed')),'POST'));
     tcheck(http_response_code()===400 && $injection['error_code']==='INVALID_REQUEST','Status injection through content endpoint');
     TaskTestUser::$current=$actors['manager'];

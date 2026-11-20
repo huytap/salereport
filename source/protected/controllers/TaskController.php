@@ -75,7 +75,7 @@ class TaskController extends ScopedController
     }
     private function edit($id,$mode)
     {
-        TaskService::authorize($mode); $task=CustomerPolicy::load('Task','task','task',$mode,$id); $values=$this->values($task); $errors=array(); $key=bin2hex(random_bytes(16)); $version=$task->lock_version;
+        TaskService::authorize($mode); $task=CustomerPolicy::load('Task','task','task',$mode,$id); $values=$this->values($task); $errors=array(); $conflict=false; $key=bin2hex(random_bytes(16)); $version=$task->lock_version;
         if ($mode!=='reopen' && !in_array($task->status,array('open','in_progress'),true)) { throw new CHttpException(409,'Công việc đã đóng.'); }
         if ($mode==='reopen' && !in_array($task->status,array('completed','cancelled'),true)) { throw new CHttpException(409,'Công việc chưa đóng.'); }
         if (Yii::app()->request->isPostRequest) {
@@ -84,9 +84,13 @@ class TaskController extends ScopedController
                 $result=$mode==='update'?TaskService::update($id,$fields,$version,$key):call_user_func(array('TaskService',$mode),$id,$fields,$version,Yii::app()->request->getPost('reason',''),$key,Yii::app()->request->getPost('allow_overdue')==='1');
                 $this->done($result); return;
             } catch (CustomerValidationException $e) { $errors=$this->errors($e); }
+            catch (CHttpException $e) {
+                if ($e->statusCode!==409 || Yii::app()->request->getParam('format')==='json') { throw $e; }
+                http_response_code(409); $errors=array('conflict'=>array($e->getMessage())); $conflict=true;
+            }
         }
         $contacts=ContactPerson::model()->findAll("account_id=:id AND status='active'",array(':id'=>$task->account_id));
-        $this->render('form',array('mode'=>$mode,'task'=>$task,'values'=>$values,'errors'=>$errors,'key'=>$key,'version'=>$version,'contacts'=>$contacts));
+        $this->render('form',array('mode'=>$mode,'task'=>$task,'values'=>$values,'errors'=>$errors,'key'=>$key,'version'=>$version,'contacts'=>$contacts,'conflict'=>$conflict));
     }
     public function actionUpdate($id) { $this->edit($id,'update'); }
     public function actionReschedule($id) { $this->edit($id,'reschedule'); }

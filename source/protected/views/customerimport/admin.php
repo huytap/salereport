@@ -5,7 +5,7 @@
 <?php echo CHtml::submitButton('Xem danh sách nguồn',array('class'=>'btn btn-default')); echo CHtml::endForm(); ?>
 <?php echo CHtml::beginForm(array('preview'),'post'); echo CHtml::hiddenField('ui','1'); echo CHtml::hiddenField('source_type',$sources['type']); ?>
 <table class="table table-striped"><thead><tr><th>Chọn</th><th>Mã nguồn</th><th>Doanh nghiệp</th><th>Người liên hệ</th><th>Email</th></tr></thead><tbody>
-<?php foreach ($sources['rows'] as $source): ?><tr><td><?php echo CHtml::checkBox('source_ids[]',false,array('value'=>$source['id'],'uncheckValue'=>null)); ?></td><td><?php echo (int)$source['id']; ?></td><td><?php echo CHtml::encode($source['company']); ?></td><td><?php echo CHtml::encode(trim($source['first_name'].' '.$source['last_name'])); ?></td><td><?php echo CHtml::encode($source['email']); ?></td></tr><?php endforeach; ?>
+<?php foreach ($sources['rows'] as $source): ?><tr><td><?php echo CHtml::checkBox('source_ids[]',false,array('id'=>'source_ids_'.(int)$source['id'],'aria-label'=>'Chọn nguồn #'.(int)$source['id'],'value'=>$source['id'],'uncheckValue'=>null)); ?></td><td><?php echo (int)$source['id']; ?></td><td><?php echo CHtml::encode($source['company']); ?></td><td><?php echo CHtml::encode(trim($source['first_name'].' '.$source['last_name'])); ?></td><td><?php echo CHtml::encode($source['email']); ?></td></tr><?php endforeach; ?>
 </tbody></table>
 <p>Trang <?php echo (int)$sources['page']; ?>, tổng <?php echo (int)$sources['total']; ?> bản ghi.</p>
 <div class="form-group"><label>Hoặc thêm mã bản ghi nguồn (phân cách bằng dấu phẩy, tối đa 500 dòng mỗi đợt)</label><?php echo CHtml::textArea('manual_ids','',array('class'=>'form-control')); ?></div>

@@ -1,0 +1,254 @@
+{
+  "date": "2026-11-20",
+  "result": "PASS",
+  "browser": "ChatGPT in-app browser",
+  "base_url": "http://127.0.0.1:8099",
+  "database": "sale_report_mvp_test_browser_uat",
+  "data": "synthetic only; no customer data copied",
+  "business_signoff": "pending human business owner",
+  "cases": [
+    {
+      "id": "UAT01",
+      "result": "PASS",
+      "observed": "Tạo hồ sơ, hai liên hệ dùng chung email, phân công A tại H1",
+      "screenshots": [
+        "uat-browser/01-contacts.jpg"
+      ]
+    },
+    {
+      "id": "UAT02",
+      "result": "PASS",
+      "observed": "Report và ba task trong một giao dịch; lỗi cuộc hẹn không lưu từng phần, sửa rồi lưu thành công",
+      "screenshots": [
+        "uat-browser/03-report-three-tasks.jpg",
+        "uat-browser/19-validation-fixed.jpg"
+      ]
+    },
+    {
+      "id": "UAT03",
+      "result": "PASS",
+      "observed": "Lịch tuần đúng giờ/ngày; inbox A nhận một nhắc và đánh dấu đọc",
+      "screenshots": [
+        "uat-browser/04-week-calendar.jpg",
+        "uat-browser/05-sales-a-reminder.jpg"
+      ]
+    },
+    {
+      "id": "UAT04",
+      "result": "PASS",
+      "observed": "Hoàn thành, hủy, đổi hạn có lý do; Report và snapshot giữ nguyên",
+      "screenshots": [
+        "uat-browser/07-report-preserved.jpg"
+      ]
+    },
+    {
+      "id": "UAT05",
+      "result": "PASS",
+      "observed": "Hai cửa sổ sửa cùng version; cửa sổ cũ nhận 409, giữ dữ liệu nhập và mở phiên bản mới",
+      "screenshots": [
+        "uat-browser/06-stale-conflict-fixed.jpg"
+      ]
+    },
+    {
+      "id": "UAT06",
+      "result": "PASS",
+      "observed": "Preview và bàn giao chỉ việc mở A→B tại H1; việc đóng giữ A, A mất quyền Own",
+      "screenshots": [
+        "uat-browser/08-handover-preview.jpg",
+        "uat-browser/09-handover-history.jpg",
+        "uat-browser/10-former-owner-denied.jpg"
+      ]
+    },
+    {
+      "id": "UAT07",
+      "result": "PASS",
+      "observed": "Ngoài H2 không đọc URL/lookup/export; reader xem được nhưng không có quyền ghi",
+      "screenshots": [
+        "uat-browser/11-outside-list-empty.jpg",
+        "uat-browser/12-reader-read-only.jpg"
+      ]
+    },
+    {
+      "id": "UAT08",
+      "result": "PASS",
+      "observed": "Preview/map/approve/import Contact và Report, đối soát và replay; nguồn mơ hồ không tự gộp, skip vẫn giữ archive",
+      "screenshots": [
+        "uat-browser/13-import-reconciled.jpg",
+        "uat-browser/14-report-import-reconciled.jpg",
+        "uat-browser/20-completed-source-warnings-fixed.jpg",
+        "uat-browser/21-source-selection-fixed.jpg",
+        "uat-browser/23-ambiguous-preview.jpg",
+        "uat-browser/24-skipped-source-archive.jpg"
+      ]
+    },
+    {
+      "id": "UAT09",
+      "result": "PASS",
+      "observed": "Worker tắt vẫn thấy việc; dispatch test nhắc đúng B/generation, replay không trùng, A không nhận, stale heartbeat có cảnh báo",
+      "screenshots": [
+        "uat-browser/15-b-before-worker.jpg",
+        "uat-browser/16-b-after-worker.jpg",
+        "uat-browser/17-b-replay-no-duplicate.jpg",
+        "uat-browser/18-a-no-b-reminder.jpg",
+        "uat-browser/22-worker-stale-warning.jpg"
+      ]
+    }
+  ],
+  "actors": {
+    "all_admin": 1,
+    "manager_hotel_h1": 3,
+    "sales_a_own_h1": 4,
+    "sales_b_own_h1": 5,
+    "outside_own_h2": 6,
+    "reader_hotel_h1": 7
+  },
+  "hotels": {
+    "h1": 3,
+    "h2": 4
+  },
+  "records": {
+    "account_id": 1,
+    "native_report_id": 2,
+    "native_report_lock_version": 1,
+    "task_ids": [
+      1,
+      2,
+      3
+    ],
+    "task_statuses": [
+      "completed",
+      "cancelled",
+      "open"
+    ],
+    "task_assignees": [
+      4,
+      4,
+      5
+    ],
+    "open_task_schedule_version": 5,
+    "import_batches": {
+      "1": "legacy_contact/linked",
+      "2": "legacy_report/linked",
+      "3": "legacy_contact/skipped"
+    },
+    "skipped_raw_snapshot_bytes": 614
+  },
+  "final_counts": {
+    "account": 1,
+    "contact_person": 2,
+    "task": 3,
+    "import_batch": 3,
+    "notification_historical_total": 2,
+    "current_generation_notifications_to_b": 1,
+    "notification_replay_created": 0
+  },
+  "worker_executions": [
+    {
+      "args": [
+        "dispatch"
+      ],
+      "exit_code": 2,
+      "result": {
+        "error_code": "REQUEST_REJECTED",
+        "message": "Dispatch đang tắt. Chỉ bật tạm cho process test bằng --enableTest=1."
+      }
+    },
+    {
+      "args": [
+        "dispatch",
+        "--dryRun=1"
+      ],
+      "exit_code": 0,
+      "result": {
+        "dry_run": true,
+        "worker_enabled": false,
+        "selected_count": 1,
+        "would_deliver": 1,
+        "would_cancel": 0,
+        "would_recover": 0,
+        "reasons": []
+      }
+    },
+    {
+      "args": [
+        "dispatch",
+        "--enableTest=1"
+      ],
+      "exit_code": 0,
+      "result": {
+        "run_id": 2,
+        "run_key": "848dce9ab578e5fdd216749d2cdd07db",
+        "dry_run": false,
+        "status": "completed",
+        "selected_count": 1,
+        "budget_exhausted": false,
+        "cutover_paused": false,
+        "created_count": 1,
+        "recovered_count": 0,
+        "cancelled_count": 0,
+        "skipped_count": 0,
+        "error_count": 0,
+        "processed_count": 1
+      }
+    },
+    {
+      "args": [
+        "dispatch",
+        "--enableTest=1"
+      ],
+      "exit_code": 0,
+      "result": {
+        "run_id": 3,
+        "run_key": "104db46bead62598bc73f166f18345dc",
+        "dry_run": false,
+        "status": "completed",
+        "selected_count": 0,
+        "budget_exhausted": false,
+        "cutover_paused": false,
+        "created_count": 0,
+        "recovered_count": 0,
+        "cancelled_count": 0,
+        "skipped_count": 0,
+        "error_count": 0,
+        "processed_count": 0
+      }
+    }
+  ],
+  "regression": {
+    "result": "PASS",
+    "jobs": 21,
+    "numbered_assertions": 955,
+    "evidence": "wp09-browser-regression-evidence.json"
+  },
+  "production": {
+    "checksum_before": {
+      "contact": 1859318667,
+      "reports": 1319172983,
+      "users": 1097044357,
+      "roles": 1675026945,
+      "incident": 0,
+      "staff_asst": 0,
+      "trackings": 3337141388,
+      "user_history": 2096163467
+    },
+    "checksum_after": {
+      "contact": 1859318667,
+      "reports": 1319172983,
+      "users": 1097044357,
+      "roles": 1675026945,
+      "incident": 0,
+      "staff_asst": 0,
+      "trackings": 3337141388,
+      "user_history": 2096163467
+    },
+    "crm_table_count": 0,
+    "cron_modified": false,
+    "mvp_flags_changed": false,
+    "operating_config_changed": false
+  },
+  "cleanup": {
+    "browser_web_server": "stopped",
+    "worker": "one-shot processes exited; no scheduler installed",
+    "browser_fixture": "retained on dedicated synthetic DB for review"
+  }
+}

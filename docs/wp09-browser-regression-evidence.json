@@ -1,0 +1,178 @@
+{
+  "started_at_utc": "2026-11-20T07:49:57.875441+00:00",
+  "result": "PASS",
+  "scope": "local synthetic DBs only",
+  "human_uat": "pending",
+  "cron_modified": false,
+  "jobs": [
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "models-smoke.php",
+      "seconds": 0.199,
+      "exit_code": 0,
+      "stdout": "PASS: all 8 model mappings, live schema, search and pagination.\nPASS: existing report, users and login history pages render with restored models.\nPASS: isolated CRUD for 8 tables, relations, helpers, authentication, validation, filters and protected audit fields.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "management-smoke.php",
+      "seconds": 0.322,
+      "exit_code": 0,
+      "stdout": "PASS: Contact CRUD/pages/AJAX, date and multi-select forms, CSV template/upload/errors, complete XLSX export.\nPASS: Users CRUD/pages/AJAX, hashing/reset/change password, permissions, POST-only deletion, login/logout history.\nPASS: optional-date migration is idempotent; all writes stayed in temporary tables.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "access-smoke.php",
+      "seconds": 0.109,
+      "exit_code": 0,
+      "stdout": "PASS: required credentials, parameterized authentication, database reads and authenticated dashboard.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-schema-smoke.php",
+      "seconds": 0.162,
+      "exit_code": 0,
+      "stdout": "PASS: 96 assertions; 14 models, FK/idempotency constraints, dates, protected fields, version conflict, rollback guard and preserved legacy data.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-policy-smoke.php",
+      "seconds": 0.271,
+      "exit_code": 0,
+      "stdout": "PASS: 94 policy assertions; Own/Hotel/All, mixed roles, legacy URLs, lookups/export, grant audit/revocation, CSRF and stale sessions.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-import-smoke.php",
+      "seconds": 0.693,
+      "exit_code": 0,
+      "stdout": "PASS: 118 import assertions; snapshots, explicit duplicate review, per-row rollback/resume, source/target staleness, Report preservation, permissions, UI/CSRF, reconciliation and cross-connection mutex.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-import-durability.php",
+      "seconds": 0.155,
+      "exit_code": 0,
+      "stdout": "PASS: 12 durability assertions; independently visible commits, reconnect/resume, row rollback, idempotent retry and run-owned cleanup.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-customer-smoke.php",
+      "seconds": 0.514,
+      "exit_code": 0,
+      "stdout": "PASS: 130 customer assertions; scoped pages, contact CRUD/archive, action/CSRF, duplicate review, version/replay, atomic Hotel handover, reminder schedules and rollback.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-customer-durability.php",
+      "seconds": 0.143,
+      "exit_code": 0,
+      "stdout": "PASS: 20 customer durability assertions; independent commits, failed handover rollback, recipient/version/reminders, replay and run-owned cleanup.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-task-smoke.php",
+      "seconds": 0.721,
+      "exit_code": 0,
+      "stdout": "PASS: 114 task assertions; scoped CRUD, transitions, schedule/version/replay, current-owner reopen, reminder invalidation, timezone/DST, weekly boundaries, HTML/JSON/CSRF and rollback.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-task-durability.php",
+      "seconds": 3.667,
+      "exit_code": 0,
+      "stdout": "PASS: 33 task durability assertions; independent commits, atomic reminder failure, bounded retry, reconnect/replay, close vs stale reschedule and run-owned cleanup.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-report-smoke.php",
+      "seconds": 0.62,
+      "exit_code": 0,
+      "stdout": "PASS: 87 Report assertions; canonical snapshots, multiple tasks/row errors, transaction rollback, replay/version, scopes/handover, quick contact, 7-day lock, legacy preservation and HTML/JSON/CSRF.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-report-durability.php",
+      "seconds": 3.706,
+      "exit_code": 0,
+      "stdout": "PASS: 39 Report durability assertions; last-task rollback, quick-contact rollback, bounded whole-request retry, independent commits, reconnect/replay, lock contention and stale scope.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-pilot-acceptance.php",
+      "seconds": 0.921,
+      "exit_code": 0,
+      "stdout": "{\n    \"result\": \"PASS\",\n    \"assertions\": 47,\n    \"automated_rehearsals\": [\n        \"UAT01 Account\\/two Contacts\\/assignment\",\n        \"UAT02 Report plus three Tasks\",\n        \"UAT03 week\\/list\\/recipient inbox\",\n        \"UAT04 transitions and Report history\",\n        \"UAT05 optimistic concurrency\",\n        \"UAT06 handover and current scopes\",\n        \"UAT07 URL\\/lookup\\/export isolation\",\n        \"UAT08 source preview\\/import replay\",\n        \"UAT09 pause\\/restart without duplication\",\n        \"Cutover\\/incident\\/recovery\"\n    ],\n    \"human_uat\": \"pending; no business sign-off or production pilot performed\"\n}",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-backup-recovery.php",
+      "seconds": 0.711,
+      "exit_code": 0,
+      "stdout": "{\n    \"result\": \"PASS\",\n    \"assertions\": 7,\n    \"tables\": 37,\n    \"dump_bytes\": 69772,\n    \"dump_ms\": 133,\n    \"restore_ms\": 269,\n    \"scope\": \"local synthetic quiescent DB; not production RPO/RTO\",\n    \"target\": \"new disposable isolated schema; dropped after verification\"\n}",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot_restore",
+      "test": "mvp-pilot-migration.php",
+      "seconds": 0.308,
+      "exit_code": 0,
+      "stdout": "PASS: 10 WP09 index migration/preflight assertions; up/down/up, no data changes, edited index guard and read-only check.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_reminder_pilot",
+      "test": "mvp-reminder-smoke.php",
+      "seconds": 0.685,
+      "exit_code": 0,
+      "stdout": "PASS: 99 reminder assertions; dry-run, dispatch eligibility, exactly-once/recovery, recipient-only read, current scopes/version, inbox/JSON/CSRF/XSS, health and legacy URL.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_reminder_pilot",
+      "test": "mvp-reminder-durability.php",
+      "seconds": 0.788,
+      "exit_code": 0,
+      "stdout": "PASS: 36 reminder durability assertions; rollback after notification insert, bounded retries, reconnect/recovery, two real worker processes, close/revoke races, CLI read-only checks and cleanup.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-reminder-client-smoke.js",
+      "seconds": 0.049,
+      "exit_code": 0,
+      "stdout": "PASS: 13 reminder client assertions; async read-only polling, no overlap, visibility pause/resume, safe text rendering and stale-data clearing.",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_performance",
+      "test": "mvp-performance.php",
+      "seconds": 8.536,
+      "exit_code": 0,
+      "stdout": "{\n    \"measured_at_utc\": \"2026-11-20T07:50:20+00:00\",\n    \"php\": \"7.4.33\",\n    \"mysql\": \"26.7.0\",\n    \"server_comment\": \"Homebrew\",\n    \"architecture\": \"arm64\",\n    \"fixture_counts\": {\n        \"crm_account\": 2000,\n        \"crm_task\": 16000,\n        \"reports\": 2001,\n        \"crm_notification\": 2000\n    },\n    \"method\": \"21 warm serial samples per service including rendered Task relations; counting DB command executions without SQL profiler retention; committed synthetic fixture with ANALYZE TABLE, owned-ID cleanup; not HTTP/concurrent production load\",\n    \"measurements\": [\n        {\n            \"name\": \"Own/accounts\",\n            \"samples\": 21,\n            \"p50_ms\": 6.864,\n            \"p95_ms\": 7.473,\n            \"max_sql\": 13\n        },\n        {\n            \"name\": \"Own/tasks_render_data\",\n            \"samples\": 21,\n            \"p50_ms\": 28.656,\n            \"p95_ms\": 29.642,\n            \"max_sql\": 14\n        },\n        {\n            \"name\": \"Own/calendar\",\n            \"samples\": 21,\n            \"p50_ms\": 9.516,\n            \"p95_ms\": 10.034,\n            \"max_sql\": 6\n        },\n        {\n            \"name\": \"Own/account_detail\",\n            \"samples\": 21,\n            \"p50_ms\": 2.663,\n            \"p95_ms\": 4.236,\n            \"max_sql\": 17\n        },\n        {\n            \"name\": \"Own/summary\",\n            \"samples\": 21,\n            \"p50_ms\": 23.037,\n            \"p95_ms\": 24.226,\n            \"max_sql\": 17\n        },\n        {\n            \"name\": \"Hotel/accounts\",\n            \"samples\": 21,\n            \"p50_ms\": 8.231,\n            \"p95_ms\": 8.999,\n            \"max_sql\": 13\n        },\n        {\n            \"name\": \"Hotel/tasks_render_data\",\n            \"samples\": 21,\n            \"p50_ms\": 29.145,\n            \"p95_ms\": 29.729,\n            \"max_sql\": 14\n        },\n        {\n            \"name\": \"Hotel/calendar\",\n            \"samples\": 21,\n            \"p50_ms\": 8.928,\n            \"p95_ms\": 9.675,\n            \"max_sql\": 6\n        },\n        {\n            \"name\": \"Hotel/account_detail\",\n            \"samples\": 21,\n            \"p50_ms\": 2.593,\n            \"p95_ms\": 3.912,\n            \"max_sql\": 17\n        },\n        {\n            \"name\": \"Hotel/summary\",\n            \"samples\": 21,\n            \"p50_ms\": 2.787,\n            \"p95_ms\": 2.955,\n            \"max_sql\": 17\n        },\n        {\n            \"name\": \"All/accounts\",\n            \"samples\": 21,\n            \"p50_ms\": 4.8,\n            \"p95_ms\": 5.162,\n            \"max_sql\": 11\n        },\n        {\n            \"name\": \"All/tasks_render_data\",\n            \"samples\": 21,\n            \"p50_ms\": 3.381,\n            \"p95_ms\": 3.581,\n            \"max_sql\": 13\n        },\n        {\n            \"name\": \"All/calendar\",\n            \"samples\": 21,\n            \"p50_ms\": 10.295,\n            \"p95_ms\": 10.954,\n            \"max_sql\": 5\n        },\n        {\n            \"name\": \"All/account_detail\",\n            \"samples\": 21,\n            \"p50_ms\": 2.159,\n            \"p95_ms\": 3.001,\n            \"max_sql\": 15\n        },\n        {\n            \"name\": \"All/summary\",\n            \"samples\": 21,\n            \"p50_ms\": 12.574,\n            \"p95_ms\": 13.349,\n            \"max_sql\": 20\n        }\n    ],\n    \"explain\": {\n        \"account_list\": [\n            {\n                \"id\": 1,\n                \"select_type\": \"SIMPLE\",\n                \"table\": \"t\",\n                \"partitions\": null,\n                \"type\": \"ALL\",\n                \"possible_keys\": \"ix_account_status,ix_account_pilot_list\",\n                \"key\": null,\n                \"key_len\": null,\n                \"ref\": null,\n                \"rows\": 2000,\n                \"filtered\": 100,\n                \"Extra\": \"Using where; Using filesort\"\n            }\n        ],\n        \"task_dates\": [\n            {\n                \"id\": 1,\n                \"select_type\": \"SIMPLE\",\n                \"table\": \"t\",\n                \"partitions\": null,\n                \"type\": \"range\",\n                \"possible_keys\": \"ix_task_pilot_dates\",\n                \"key\": \"ix_task_pilot_dates\",\n                \"key_len\": \"136\",\n                \"ref\": null,\n                \"rows\": 269,\n                \"filtered\": 100,\n                \"Extra\": \"Using index condition\"\n            }\n        ],\n        \"task_list\": [\n            {\n                \"id\": 1,\n                \"select_type\": \"SIMPLE\",\n                \"table\": \"t\",\n                \"partitions\": null,\n                \"type\": \"index\",\n                \"possible_keys\": null,\n                \"key\": \"ix_task_pilot_due\",\n                \"key_len\": \"9\",\n                \"ref\": null,\n                \"rows\": 25,\n                \"filtered\": 100,\n                \"Extra\": null\n            }\n        ]\n    },\n    \"result\": \"PASS\",\n    \"failures\": []\n}",
+      "stderr": ""
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "yiic.php",
+      "seconds": 0.084,
+      "exit_code": 0,
+      "stdout": "{\"read_only\":true,\"database\":\"sale_report_mvp_test_pilot\",\"schema_ok\":true,\"latest_migration\":\"m261120_110000_prepare_pilot_indexes\",\"expected_migration\":\"m261120_110000_prepare_pilot_indexes\",\"indexes\":{\"ix_account_pilot_list\":true,\"ix_task_pilot_dates\":true,\"ix_task_pilot_due\":true},\"transactional_tables\":[{\"TABLE_NAME\":\"crm_account\",\"ENGINE\":\"InnoDB\"},{\"TABLE_NAME\":\"crm_customer_request\",\"ENGINE\":\"InnoDB\"},{\"TABLE_NAME\":\"crm_cutover\",\"ENGINE\":\"InnoDB\"},{\"TABLE_NAME\":\"crm_notification\",\"ENGINE\":\"InnoDB\"},{\"TABLE_NAME\":\"crm_task\",\"ENGINE\":\"InnoDB\"},{\"TABLE_NAME\":\"crm_task_reminder\",\"ENGINE\":\"InnoDB\"},{\"TABLE_NAME\":\"reports\",\"ENGINE\":\"InnoDB\"}],\"flags\":{\"customerWrite\":false,\"reportWrite\":false,\"taskWrite\":false,\"reminders\":false,\"legacyImportEnabled\":true},\"timezone\":\"Asia\\/Ho_Chi_Minh\",\"runtime_writable\":true,\"cutover\":{\"state\":{\"id\":1,\"stage\":\"preparing\",\"canonical_latched\":0,\"lock_version\":1,\"changed_by\":null,\"changed_at_utc\":null,\"reason\":null},\"ready\":false,\"issues\":[\"FLAG_OFF_customerWrite\",\"FLAG_OFF_reportWrite\",\"FLAG_OFF_taskWrite\",\"unmapped_contacts\",\"unmapped_reports\",\"unverified_reports\",\"unreviewed_schedules\"],\"counts\":{\"quarantined_contacts\":0,\"quarantined_reports\":0,\"unmapped_contacts\":1,\"unmapped_reports\":1,\"unverified_reports\":1,\"invalid_report_assignments\":0,\"open_import_rows\":0,\"open_transfer_rows\":0,\"unassigned\":0,\"running_dispatch\":0,\"invalid_owners\":0,\"unreviewed_schedules\":2},\"reminders_enabled\":false},\"reminder\":{\"worker_enabled\":false,\"healthy\":false,\"alerts\":[\"DISABLED\",\"NEVER_COMPLETED\"],\"last_success_at_utc\":null,\"stuck_runs\":0,\"queue\":{\"pending_count\":0,\"due_count\":0,\"late_pending_count\":0,\"failed_pending_count\":0,\"oldest_pending_at_utc\":null},\"latest_run\":null,\"checked_at_utc\":\"2026-11-20 07:50:21\"},\"scheduler\":\"not_inspected_or_modified\",\"production_pilot\":\"not_authorized_by_this_check\"}",
+      "stderr": ""
+    }
+  ],
+  "finished_at_utc": "2026-11-20T07:50:21.241438+00:00"
+}

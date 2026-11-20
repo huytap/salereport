@@ -241,6 +241,8 @@ try {
     impStatus(405,function()use($b){impRun('commit',array('id'=>$b));},'GET commit accepted.');
     impStatus(400,function()use($b){impRun('commit',array('id'=>$b),array(),'POST',false);},'Import without CSRF accepted.');
     $html=impRun('admin'); impCheck(strpos($html,'name="'.Yii::app()->request->csrfTokenName.'"')!==false,'Preview form missing CSRF.');
+    $completedHtml=impRun('view',array('id'=>$b)); impCheck(strpos($completedHtml,'Ghi chú nguồn tại thời điểm xem trước (đã có quyết định)')!==false,'Completed source warnings are historical, not unresolved');
+    $sourceHtml=impRun('admin',array('source_type'=>'report')); preg_match_all('/id="(source_ids_[0-9]+)"/',$sourceHtml,$sourceControls); impCheck(count($sourceControls[1])>1 && count($sourceControls[1])===count(array_unique($sourceControls[1])),'Multiple source rows have unique checkbox identities');
     $rowHtml=impRun('view',array('id'=>$changedBatch)); impCheck(strpos($rowHtml,'decision[account_kind]')!==false && strpos($rowHtml,'expected_version')!==false,'Mapping review UI did not render.');
     $json=CJSON::decode(impRun('view',array('id'=>$b,'format'=>'json'))); impCheck(count($json['rows'])===3 && $json['counts']['balanced'],'JSON batch view failed.');
     $formSource=impSource('contact',array_merge($defaults,array('company'=>'Complete browser form flow','first_name'=>'','last_name'=>'')));

@@ -2,13 +2,15 @@
 
 Ngày 20/11/2026. Hoàn thành phần kỹ thuật và chuẩn bị UAT/pilot trong phạm vi DB test. **Chưa có UAT nghiệp vụ ký xác nhận hoặc pilot production**. [Runbook và bảng nghiệm thu](wp09-van-hanh-va-ke-hoach-pilot.md) ghi rõ người phụ trách và các điều kiện còn chờ.
 
+Cập nhật sau UAT bằng trình duyệt: **9/9 kịch bản đạt**, gồm import/replay/skip archive và worker/inbox/stale heartbeat. Đã sửa lỗi phát hiện, hồi quy **21/21 bước, 955 assertions**. Xem [biên bản browser UAT và ảnh](wp09-browser-uat-va-ket-qua-nghiem-thu.md). Các số 949 và benchmark bên dưới là mốc nghiệm thu kỹ thuật trước lượt browser; chữ ký nghiệp vụ vẫn chờ.
+
 ## 1. Kết quả bộ nghiệm thu
 
 - Runner đạt **21/21 bước**, với **949 assertions có đếm số**, cùng các suite model/management/access và benchmark. Evidence: [JSON nghiệm thu](wp09-acceptance-evidence.json).
 - WP09 mới có 47 assertions cho 9 luồng UAT tự động và incident/recovery, 10 cho migration/preflight, 7 cho dump/restore. Các assertions đếm số còn lại là hồi quy WP01–07; không cộng các bước nghiệp vụ chưa được người dùng ký.
 - Hồi quy gồm quyền Own/Hotel/All, CSRF, scope stale, transaction/rollback/retry, lock nhiều connection, import/handover, Report nhiều task, 7 ngày khóa sửa, timezone/DST, hai worker, inbox và client polling.
 - Thử đủ lỗi con trong transaction và process worker riêng. Chỉ process CLI test được bật tạm; không cài hay bật cron.
-- PHP lint 8 file mới/thay đổi và Python AST đạt; diff whitespace đạt. Chưa chạy kiểm thử trình duyệt tương tác với người dùng thật hoặc tải HTTP đồng thời.
+- PHP lint 8 file mới/thay đổi và Python AST đạt; diff whitespace đạt. Mốc này chưa chạy trình duyệt; lượt browser bằng actor giả được ghi trong biên bản cập nhật ở trên. Chưa có người dùng nghiệp vụ ký hoặc tải HTTP đồng thời.
 
 ## 2. Thay đổi truy vấn và bằng chứng
 
@@ -56,4 +58,4 @@ Checksum trước/sau không đổi: Contact `1859318667`, Reports `1319172983`,
 
 Sau kiểm thử: các DB pilot/performance/reminder không còn Account/Task/Notification thử; không còn import batch hoặc dispatch run thử trên schema tương ứng. Gate pilot về preparing/latch 0/version 1 của fixture. Không còn schema recovery có nonce. Việc reset gate này chỉ là teardown fixture có tên DB và marker được kiểm tra trong script test, không có đường reset qua sản phẩm.
 
-Các việc cần chủ nghiệp vụ/người vận hành thực hiện trước mở pilot: chọn người thật và Hotel, UAT bằng trình duyệt và ký từng ca, kiểm dữ liệu/quyền trên staging, đo HTTP đồng thời, chốt RPO/RTO và người trực, rồi quyết định phạm vi/ngày mở. Tất cả đang được chuẩn bị trong runbook, chưa đánh dấu đã thực hiện.
+Các việc cần chủ nghiệp vụ/người vận hành thực hiện trước mở pilot: chọn người thật và Hotel, kiểm lại các ca thực tế và ký xác nhận nghiệp vụ từng ca, kiểm dữ liệu/quyền trên staging, đo HTTP đồng thời, chốt RPO/RTO và người trực, rồi quyết định phạm vi/ngày mở. Tất cả đang được chuẩn bị trong runbook, chưa đánh dấu đã thực hiện.

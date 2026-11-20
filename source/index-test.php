@@ -5,11 +5,11 @@
  */
 
 // change the following paths if necessary
-$yii=dirname(__FILE__).'/../yii/yii.php';
-$config=dirname(__FILE__).'/protected/config/test.php';
+$yii=getenv('YII_FRAMEWORK_PATH') ?: dirname(__FILE__).'/../../yii/yii.php';
+$config=dirname(__FILE__).'/protected/config/'.(getenv('SALEREPORT_BROWSER_UAT')==='1'?'browser-uat.php':'test.php');
 
 // remove the following line when in production mode
-defined('YII_DEBUG') or define('YII_DEBUG',true);
+defined('YII_DEBUG') or define('YII_DEBUG',getenv('SALEREPORT_BROWSER_UAT')!=='1');
 
 require_once($yii);
 Yii::createWebApplication($config)->run();

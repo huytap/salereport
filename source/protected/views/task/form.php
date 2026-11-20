@@ -1,6 +1,7 @@
 <?php $titles=array('create'=>'Thêm công việc','update'=>'Sửa nội dung công việc','reschedule'=>'Đổi hạn / lịch','reopen'=>'Mở lại công việc'); $this->breadcrumbs=array('Công việc'=>array('admin'),$titles[$mode]); ?>
 <h1><?php echo $titles[$mode]; ?></h1>
 <?php $this->renderPartial('/account/_errors',array('errors'=>$errors)); ?>
+<?php if (!empty($conflict)): ?><p>Thay đổi chưa được lưu. Dữ liệu bạn vừa nhập được giữ bên dưới để đối chiếu.</p><p><?php echo CHtml::link('Mở phiên bản mới để đối chiếu',array($mode,'id'=>$task->id),array('class'=>'btn btn-primary')); ?></p><?php endif; ?>
 <?php if ($mode==='create'): ?>
 <?php echo CHtml::beginForm(array('create'),'get'); ?><div class="row"><div class="form-group col-md-4"><label>Khách sạn</label><?php echo CHtml::dropDownList('hotel_id',$hotelId,CHtml::listData($hotels,'id','name'),array('class'=>'form-control')); ?></div><div class="form-group col-md-4"><label>Tìm khách hàng (tối đa 100 kết quả)</label><?php echo CHtml::textField('account_q',$accountQ,array('class'=>'form-control')); ?></div></div><?php echo CHtml::submitButton('Lọc khách sạn / tên khách',array('class'=>'btn btn-default')); echo CHtml::endForm(); echo CHtml::beginForm(array('create'),'get'); echo CHtml::hiddenField('hotel_id',$hotelId); echo CHtml::hiddenField('account_q',$accountQ); ?><div class="row"><div class="form-group col-md-4"><label>Khách hàng</label><?php echo CHtml::dropDownList('account_id',$accountId,CHtml::listData($accounts,'id','name'),array('class'=>'form-control','empty'=>'Chọn sau khi lọc khách sạn')); ?></div></div><?php echo CHtml::submitButton('Chọn khách sạn / khách hàng',array('class'=>'btn btn-default')); echo CHtml::endForm(); ?>
 <?php if (!$hotelId || !$accountId): ?><p>Chọn khách sạn và khách hàng trong phạm vi được cấp để tạo việc.</p><?php return; endif; ?>
@@ -16,5 +17,5 @@
 <div class="form-group"><label>Địa điểm</label><?php echo CHtml::textField('Task[location]',$values['location'],array('class'=>'form-control','maxlength'=>255)); ?></div>
 <?php endif; ?>
 <?php if ($mode!=='update') { $this->renderPartial('_schedule',compact('values','mode')); } ?>
-<?php echo CHtml::submitButton('Lưu công việc',array('class'=>'btn btn-primary')); echo CHtml::endForm(); ?>
+<?php echo CHtml::submitButton('Lưu công việc',array('class'=>'btn btn-primary','disabled'=>!empty($conflict))); echo CHtml::endForm(); ?>
 <p><?php echo CHtml::link('Quay lại',$mode==='create'?array('admin'):array('view','id'=>$task->id)); ?></p>
