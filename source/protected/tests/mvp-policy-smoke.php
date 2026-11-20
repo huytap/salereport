@@ -121,7 +121,7 @@ try {
         $db->createCommand()->insert('reports',$row); $reports[]=$db->lastInsertID;
     }
     $task=policyRecord('Task',array('code'=>'POL-T1','account_id'=>$a1->id,'hotel_id'=>$h1->id,'title'=>'Visible Task','assignee_user_id'=>$u->id,'due_mode'=>'date','due_date'=>'2026-11-20','client_request_key'=>'policy-task'));
-    $reminder=policyRecord('TaskReminder',array('task_id'=>$task->id,'recipient_user_id'=>$u->id,'schedule_version'=>1,'reminder_kind'=>'due_day','notify_at_utc'=>'2026-11-20 02:00:00'));
+    $reminder=policyRecord('TaskReminder',array('task_id'=>$task->id,'recipient_user_id'=>$u->id,'schedule_version'=>1,'reminder_kind'=>'due_day','notify_at_utc'=>'2026-11-20 02:00:00','state'=>'delivered','delivered_at_utc'=>gmdate('Y-m-d H:i:s')));
     policyRecord('Notification',array('reminder_id'=>$reminder->id,'recipient_user_id'=>$u->id,'task_id'=>$task->id,'schedule_version'=>1,'kind'=>'due_day'));
 
     PolicyUser::$current=$u->id;

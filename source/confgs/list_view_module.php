@@ -1,5 +1,8 @@
 <?php
 return array(
+    'summary' => 'Notification summary',
+    'read' => 'Mark notification read',
+    'monitor' => 'Dispatch monitoring (All scope)',
 	'admin' => 'Admin Listing', 
 	'view' => 'View Detail',
 	'create' => 'Create New Record', 

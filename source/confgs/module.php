@@ -1,5 +1,6 @@
 <?php
 return array(
+    'reminder' => 'Thông báo',
     'task' => 'Công việc',
     'account' => 'Khách hàng',
     'customerimport' => 'Chuyển đổi hồ sơ',

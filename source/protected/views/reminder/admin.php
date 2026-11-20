@@ -1,0 +1,9 @@
+<?php $this->breadcrumbs=array('Thông báo'); $labels=array('unread'=>'Chưa đọc','read'=>'Đã đọc','all'=>'Tất cả'); ?>
+<h1>Thông báo của tôi</h1><p>Chỉ hiển thị thông báo còn hợp lệ theo công việc, phiên bản lịch và quyền hiện tại. Mở công việc không tự đánh dấu đã đọc.</p>
+<ul class="nav nav-tabs"><?php foreach ($labels as $key=>$label): ?><li<?php echo $filter===$key?' class="active"':''; ?>><?php echo CHtml::link($label,array('admin','filter'=>$key)); ?></li><?php endforeach; ?></ul>
+<table class="table table-striped"><thead><tr><th>Thông báo / Công việc</th><th>Khách hàng / Khách sạn</th><th>Hạn</th><th>Thời điểm phát (UTC)</th><th>Thao tác</th></tr></thead><tbody>
+<?php foreach ($items as $item): ?><tr><td><?php echo $item['kind']==='overdue'?'Nhắc quá hạn':'Nhắc lịch công việc'; ?><br><?php echo CHtml::link(CHtml::encode($item['title']),$item['task_url']); ?></td><td><?php echo CHtml::encode($item['account_name'].' / '.$item['hotel_name']); ?></td><td><?php echo CHtml::encode($item['due_label']); echo $item['overdue']?' · Quá hạn':''; ?></td><td><?php echo CHtml::encode($item['created_at_utc']); ?></td><td>
+<?php if (!$item['read_at_utc'] && ActionAccess::can('reminder','read')) { echo CHtml::beginForm(array('read','id'=>$item['id']),'post'); echo CHtml::hiddenField('filter',$filter); echo CHtml::submitButton('Đánh dấu đã đọc',array('class'=>'btn btn-default')); echo CHtml::endForm(); } else { echo $item['read_at_utc']?'Đã đọc':'Chưa đọc'; } ?>
+</td></tr><?php endforeach; ?><?php if (!$items): ?><tr><td colspan="5">Không có thông báo phù hợp trong phạm vi truy cập.</td></tr><?php endif; ?></tbody></table>
+<?php $this->renderPartial('/account/_pager',array('page'=>$page,'total'=>$total,'route'=>array('admin','filter'=>$filter))); ?>
+<?php if (ActionAccess::isAll() && ActionAccess::can('reminder','monitor')) { echo CHtml::link('Giám sát dispatch',array('monitor'),array('class'=>'btn btn-default')); } ?>

@@ -130,11 +130,13 @@ class CustomerPolicy
         $alias = self::alias($alias);
         $c = new CDbCriteria;
         $user = ActionAccess::user();
-        if (!$user || !self::ready() || !ActionAccess::can('reminder','admin')) { $c->addCondition('1=0'); return $c; }
+        if (!$user || !self::ready() || !ActionAccess::can('reminder','admin') || !ActionAccess::can('task','view')) { $c->addCondition('1=0'); return $c; }
         $c->compare($alias.'.recipient_user_id',$user->id);
+        $c->addCondition("EXISTS (SELECT 1 FROM crm_task_reminder nr WHERE nr.id=$alias.reminder_id AND nr.state='delivered' AND nr.reminder_kind=$alias.kind)");
+
         $scope = self::scopeCriteria('task','nt');
         $scopeSql = $scope->condition ?: '1=1';
-        $c->addCondition("EXISTS (SELECT 1 FROM crm_task nt WHERE nt.id=$alias.task_id AND nt.status IN ('open','in_progress') AND nt.schedule_version=$alias.schedule_version AND nt.assignee_user_id=$alias.recipient_user_id AND $scopeSql)");
+        $c->addCondition("EXISTS (SELECT 1 FROM crm_task nt INNER JOIN crm_account_hotel na ON na.account_id=nt.account_id AND na.hotel_id=nt.hotel_id INNER JOIN crm_account nac ON nac.id=nt.account_id INNER JOIN crm_hotel nh ON nh.id=nt.hotel_id WHERE nt.id=$alias.task_id AND nt.status IN ('open','in_progress') AND nt.schedule_version=$alias.schedule_version AND nt.assignee_user_id=$alias.recipient_user_id AND na.status='active' AND na.owner_user_id=nt.assignee_user_id AND nac.status='active' AND nh.status='active' AND (nt.contact_person_id IS NULL OR EXISTS (SELECT 1 FROM crm_contact_person ncp WHERE ncp.id=nt.contact_person_id AND ncp.account_id=nt.account_id AND ncp.status='active')) AND $scopeSql)");
         return $c;
     }
 

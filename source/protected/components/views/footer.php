@@ -25,6 +25,9 @@
     <script src="<?php echo Yii::app()->request->baseUrl; ?>/chosen/chosen.jquery.js" type="text/javascript"></script>
     <script type="text/javascript" src="<?php echo Yii::app()->baseUrl?>/js/custom.js"></script>
 
+<?php if (ReminderService::available() && ActionAccess::can('reminder','admin') && ActionAccess::can('reminder','summary') && ActionAccess::can('task','view')): ?>
+    <script src="<?php echo CHtml::encode(Yii::app()->baseUrl); ?>/js/mvp-reminders.js" defer></script>
+    <?php endif; ?>
 </body>
 
 </html>
