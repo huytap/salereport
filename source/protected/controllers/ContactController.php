@@ -4,6 +4,23 @@ class ContactController extends ManagementController
 {
     protected $modelClass = 'Contact';
 
+    public function actionAdmin()
+    {
+        if (CutoverService::legacyBlocked()) { ActionAccess::requireAction('account','admin'); $this->redirect(array('/account/admin')); return; }
+        parent::actionAdmin();
+    }
+    public function actionView($id)
+    {
+        if (CutoverService::legacyBlocked()) {
+            $this->loadModel($id);
+            $link=LegacyLink::model()->find("source_type='contact' AND source_id=:id AND resolution_state='linked'",array(':id'=>(string)$id));
+            if (!$link || !$link->account_id) { throw new CHttpException(410,'Nguồn chưa mapping; quản trị xem kho import để rà soát.'); }
+            CustomerPolicy::load('Account','account','account','view',$link->account_id);
+            $this->redirect(array('/account/view','id'=>$link->account_id)); return;
+        }
+        parent::actionView($id);
+    }
+
     public function actionCreate()
     {
         CustomerPolicy::requireLegacyWrite('contact','create');
@@ -12,7 +29,9 @@ class ContactController extends ManagementController
 
     public function actionUpdate($id)
     {
-        $this->editContact($this->loadModel($id), 'update');
+        $model=$this->loadModel($id);
+        if (CutoverService::legacyBlocked()) { throw new CHttpException(410,'Dùng hồ sơ khách hàng thống nhất.'); }
+        $this->editContact($model, 'update');
     }
 
     protected function editContact($model, $view)
@@ -82,6 +101,7 @@ class ContactController extends ManagementController
     public function actionReport()
     {
         ActionAccess::requireAction('contact','report');
+        if (CutoverService::legacyBlocked()) { throw new CHttpException(410,'Xuất hồ sơ thống nhất tại customermove/export với hotel_id.'); }
         if (Yii::app()->request->isPostRequest && Yii::app()->request->getPost('do_export') === 'yes') {
             $this->exportExcel();
             return;
@@ -99,6 +119,7 @@ class ContactController extends ManagementController
     protected function exportExcel()
     {
         ActionAccess::requireAction('contact','report');
+        if (CutoverService::legacyBlocked()) { throw new CHttpException(410,'Xuất hồ sơ thống nhất tại customermove/export với hotel_id.'); }
         $path = tempnam(sys_get_temp_dir(), 'crm-contact-export-');
         try {
             ContactExcel::write($path, Contact::model()->findAll($this->exportCriteria()));

@@ -26,6 +26,7 @@ class ReminderDispatchService
         $db=self::testDb(); $limit=self::limit($limit); self::independent();
         if (!is_bool($dryRun)) { throw new CHttpException(400,'dryRun phải là boolean.'); }
         if (!$dryRun && empty(Yii::app()->params['mvp']['reminders'])) { throw new CHttpException(503,'Dispatch đang tắt. Chỉ bật tạm cho process test bằng --enableTest=1.'); }
+        if (!$dryRun) { CutoverService::canonicalWrite(); }
         $started=microtime(true); $now=gmdate('Y-m-d H:i:s');
         $candidates=$db->createCommand("SELECT id,task_id FROM crm_task_reminder WHERE state='pending' AND notify_at_utc<=:now ORDER BY notify_at_utc,id LIMIT ".$limit)->queryAll(true,array(':now'=>$now));
         if ($dryRun) {
@@ -44,7 +45,7 @@ class ReminderDispatchService
         $token=bin2hex(random_bytes(16));
         $db->createCommand()->insert('crm_reminder_dispatch_run',array('run_key'=>$token,'started_at_utc'=>$now,'heartbeat_at_utc'=>$now,'status'=>'running','selected_count'=>count($candidates))); $runId=(int)$db->lastInsertID;
         $stats=array('created_count'=>0,'recovered_count'=>0,'cancelled_count'=>0,'skipped_count'=>0,'error_count'=>0,'processed_count'=>0);
-        $timeout=(int)$db->createCommand('SELECT @@SESSION.innodb_lock_wait_timeout')->queryScalar(); $budget=false;
+        $timeout=(int)$db->createCommand('SELECT @@SESSION.innodb_lock_wait_timeout')->queryScalar(); $budget=false; $paused=false;
         try {
             $db->createCommand('SET SESSION innodb_lock_wait_timeout=2')->execute();
             foreach ($candidates as $candidate) {
@@ -52,14 +53,15 @@ class ReminderDispatchService
                 try {
                     $outcome=self::deliver($candidate['task_id'],$candidate['id']); $stats[$outcome.'_count']++;
                 } catch (Exception $e) {
+                    if ($e instanceof CHttpException && $e->statusCode===503) { $paused=true; break; }
                     $stats['error_count']++; self::recordError($candidate['task_id'],$candidate['id'],self::errorCode($e));
                 }
                 $stats['processed_count']++;
                 $db->createCommand()->update('crm_reminder_dispatch_run',array_merge($stats,array('heartbeat_at_utc'=>gmdate('Y-m-d H:i:s'))),'id=:id',array(':id'=>$runId));
             }
-            $status=$stats['error_count']?'partial':'completed';
-            self::finish($runId,$stats,$status,$started,$budget?'BUDGET_EXHAUSTED':($stats['error_count']?'ROW_FAILURE':null));
-            return array_merge(array('run_id'=>$runId,'run_key'=>$token,'dry_run'=>false,'status'=>$status,'selected_count'=>count($candidates),'budget_exhausted'=>$budget),$stats);
+            $status=$stats['error_count'] || $paused?'partial':'completed';
+            self::finish($runId,$stats,$status,$started,$paused?'CUTOVER_PAUSED':($budget?'BUDGET_EXHAUSTED':($stats['error_count']?'ROW_FAILURE':null)));
+            return array_merge(array('run_id'=>$runId,'run_key'=>$token,'dry_run'=>false,'status'=>$status,'selected_count'=>count($candidates),'budget_exhausted'=>$budget,'cutover_paused'=>$paused),$stats);
         } catch (Exception $e) {
             try { self::finish($runId,$stats,'failed',$started,'DISPATCH_FAILED'); } catch (Exception $ignored) {}
             throw $e;
@@ -80,6 +82,7 @@ class ReminderDispatchService
         for ($attempt=0; ; $attempt++) {
             $tx=$db->beginTransaction();
             try {
+                CutoverService::canonicalWrite(); // Shared gate lock stays held through commit; freeze waits for in-flight delivery.
                 $task=$db->createCommand('SELECT * FROM crm_task WHERE id=:id FOR UPDATE')->queryRow(true,array(':id'=>$taskId));
                 $r=$db->createCommand('SELECT * FROM crm_task_reminder WHERE id=:id FOR UPDATE')->queryRow(true,array(':id'=>$reminderId)); $now=gmdate('Y-m-d H:i:s');
                 if (!$task || !$r || $r['state']!=='pending' || $r['notify_at_utc']>$now) { $tx->commit(); return 'skipped'; }
@@ -102,6 +105,7 @@ class ReminderDispatchService
     {
         $db=Yii::app()->db; $tx=$db->beginTransaction();
         try {
+            CutoverService::canonicalWrite();
             $db->createCommand('SELECT id FROM crm_task WHERE id=:id FOR UPDATE')->queryScalar(array(':id'=>$taskId));
             $r=$db->createCommand('SELECT state,attempt_count FROM crm_task_reminder WHERE id=:id FOR UPDATE')->queryRow(true,array(':id'=>$reminderId));
             if ($r && $r['state']==='pending') { $db->createCommand()->update('crm_task_reminder',array('attempt_count'=>(int)$r['attempt_count']+1,'last_error_code'=>$code),'id=:id',array(':id'=>$reminderId)); }

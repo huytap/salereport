@@ -11,7 +11,7 @@ class ReportService
     }
     public static function authorize($action)
     {
-        ActionAccess::requireAction('report',$action); $db=Yii::app()->db;
+        ActionAccess::requireAction('report',$action); CutoverService::canonicalWrite(); $db=Yii::app()->db;
         if (empty(Yii::app()->params['mvp']['reportWrite']) || !($db instanceof IsolatedTestDbConnection)
             || $db->createCommand('SELECT DATABASE()')->queryScalar()!==IsolatedTestDbConnection::databaseName($db->connectionString)) { throw new CHttpException(503,'Ghi Report MVP chỉ được bật trên DB test.'); }
         self::ready();

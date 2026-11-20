@@ -5,7 +5,7 @@ class CustomerWriteSupport
 {
     public static function authorize($action)
     {
-        ActionAccess::requireAction('account',$action);
+        ActionAccess::requireAction('account',$action); CutoverService::canonicalWrite();
         if (empty(Yii::app()->params['mvp']['customerWrite']) || !(Yii::app()->db instanceof IsolatedTestDbConnection)) {
             throw new CHttpException(503,'Ghi hồ sơ MVP hiện chỉ được bật trên DB test.');
         }
@@ -45,6 +45,7 @@ class CustomerWriteSupport
         if ((int)$db->createCommand('SELECT GET_LOCK(:key,0)')->queryScalar(array(':key'=>$lock))!==1) { throw new CHttpException(409,'Đang có thao tác hồ sơ khác, vui lòng thử lại.'); }
         $outer=$db->getCurrentTransaction(); $owns=!$outer || !$outer->active; $sp='customer_'.bin2hex(random_bytes(8));
         try {
+            CutoverService::canonicalWrite();
             if ($owns) { $tx=$db->beginTransaction(); } else { $db->createCommand('SAVEPOINT '.$sp)->execute(); }
             try {
                 $old=$db->createCommand('SELECT * FROM crm_customer_request WHERE actor_user_id=:actor AND request_key=:key FOR UPDATE')->queryRow(true,array(':actor'=>$actor,':key'=>$key));

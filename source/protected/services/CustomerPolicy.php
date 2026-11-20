@@ -103,6 +103,7 @@ class CustomerPolicy
         if (!ActionAccess::isAll()) { throw new CHttpException(403,'Legacy writes require All scope until the scoped editor is available.'); }
         if ($controller==='report' && !empty(Yii::app()->params['mvp']['reportWrite'])) { throw new CHttpException(410,'Use the unified Report workflow.'); }
         if (!empty(Yii::app()->params['mvp']['customerWrite'])) { throw new CHttpException(410,'Use the unified customer workflow.'); }
+        CutoverService::legacyWrite();
         if ($record instanceof Report && $record->hasAttribute('account_id') && $record->account_id !== null) {
             throw new CHttpException(409,'Linked reports must be changed through the MVP workflow.');
         }

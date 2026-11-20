@@ -22,7 +22,7 @@ class CustomerImportService
     {
         $db=Yii::app()->db; $key=self::lockName();
         if ((int)$db->createCommand('SELECT GET_LOCK(:name,0)')->queryScalar(array(':name'=>$key))!==1) { throw new CHttpException(409,'Another import is running; retry later.'); }
-        try { return $callback(); }
+        try { CutoverService::sourceImport(); return $callback(); }
         finally { $db->createCommand('SELECT RELEASE_LOCK(:name)')->queryScalar(array(':name'=>$key)); }
     }
     private static function atomic($callback)

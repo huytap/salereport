@@ -8,5 +8,6 @@ return array(
     'account'=>array('admin','view','lookup','contacts','create','update','archive','assign','report','contactcreate','contactupdate','contactarchive','assignpreview'),
     'task'=>array('admin','view','calendar','create','update','complete','cancel','reopen','start','reschedule'),
     'reminder'=>array('admin','summary','read','monitor'),
+    'customermove'=>array('admin','view','preview','map','approve','commit','reconcile','export','cutover'),
     'customerimport'=>array('admin','view','preview','commit','map','approve','reconcile'),
 );

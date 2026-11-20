@@ -7,7 +7,7 @@ class TaskService
     public static function scheduleFields() { return array('kind','due_mode','due_date','due_at_utc','timezone','starts_at_utc','ends_at_utc'); }
     public static function authorize($action)
     {
-        ActionAccess::requireAction('task',$action);
+        ActionAccess::requireAction('task',$action); CutoverService::canonicalWrite();
         $db=Yii::app()->db;
         if (empty(Yii::app()->params['mvp']['taskWrite']) || !($db instanceof IsolatedTestDbConnection)
             || $db->createCommand('SELECT DATABASE()')->queryScalar()!==IsolatedTestDbConnection::databaseName($db->connectionString)) { throw new CHttpException(503,'Ghi Task chỉ được bật trên DB test.'); }
