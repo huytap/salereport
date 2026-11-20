@@ -38,7 +38,18 @@ class TaskReadService
             }
         }
         $total=(int)Task::model()->count($c); $c->limit=25; $c->offset=($page-1)*25; $c->order='t.deadline_at_utc,t.id';
-        return array('tasks'=>Task::model()->findAll($c),'filters'=>$f,'tab'=>$tab,'page'=>$page,'total'=>$total,'timezone'=>$timezone,'hotels'=>AccountReadService::hotels(),'owners'=>Users::model()->findAll(CustomerPolicy::visibleUsersCriteria()));
+        $tasks=Task::model()->findAll($c); self::pageLabels($tasks);
+        return array('tasks'=>$tasks,'filters'=>$f,'tab'=>$tab,'page'=>$page,'total'=>$total,'timezone'=>$timezone,'hotels'=>AccountReadService::hotels(),'owners'=>Users::model()->findAll(CustomerPolicy::visibleUsersCriteria()));
+    }
+    /** Batch only the IDs on this scoped page; keep LIMIT/ordering independent of label joins. */
+    private static function pageLabels(array $tasks)
+    {
+        if (!$tasks) { return; }
+        foreach (array('account'=>array('Account','account_id'),'hotel'=>array('Hotel','hotel_id'),'assignee'=>array('Users','assignee_user_id')) as $relation=>$definition) {
+            list($class,$field)=$definition; $ids=array(); foreach ($tasks as $task) { if ($task->$field) { $ids[]=$task->$field; } }
+            $labels=array(); foreach ($class::model()->findAllByPk(array_values(array_unique($ids))) as $label) { $labels[(string)$label->id]=$label; }
+            foreach ($tasks as $task) { $task->addRelatedRecord($relation,isset($labels[(string)$task->$field])?$labels[(string)$task->$field]:null,false); }
+        }
     }
     public static function detail($id,$page=1)
     {
@@ -54,8 +65,8 @@ class TaskReadService
         if ($f['status']==='') { $criteria->addInCondition('t.status',array('open','in_progress')); }
         $appointments=clone $criteria; $appointments->compare('t.kind','appointment'); $appointments->addCondition('t.starts_at_utc<:end AND t.ends_at_utc>:start');
         $appointments->params+=array(':end'=>$end->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),':start'=>$start->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'));
-        $appointments->order='t.starts_at_utc,t.id'; $appointments->limit=501; $events=Task::model()->findAll($appointments);
-        $dates=clone $criteria; $dates->compare('t.kind','task'); $dates->compare('t.due_mode','date'); $dates->addCondition('t.due_date>=:from AND t.due_date<:to'); $dates->params+=array(':from'=>$from,':to'=>$to); $dates->order='t.due_date,t.id'; $dates->limit=501; $dayTasks=Task::model()->findAll($dates);
+        $appointments->order='t.starts_at_utc,t.id'; $appointments->limit=501; $appointments->with=array('account'); $events=Task::model()->findAll($appointments);
+        $dates=clone $criteria; $dates->compare('t.kind','task'); $dates->compare('t.due_mode','date'); $dates->addCondition('t.due_date>=:from AND t.due_date<:to'); $dates->params+=array(':from'=>$from,':to'=>$to); $dates->order='t.due_date,t.id'; $dates->limit=501; $dates->with=array('account'); $dayTasks=Task::model()->findAll($dates);
         if (count($events)>500 || count($dayTasks)>500) { throw new CHttpException(422,'Có quá nhiều công việc. Hãy lọc thêm khách sạn hoặc sales.'); }
         $items=array(); $dateItems=array();
         foreach ($events as $m) { $items[]=array_merge(self::item($m),array('start_utc'=>$m->starts_at_utc,'end_utc'=>$m->ends_at_utc,'start_local'=>TaskSchedule::local($m->starts_at_utc,$timezone),'end_local'=>TaskSchedule::local($m->ends_at_utc,$timezone))); }

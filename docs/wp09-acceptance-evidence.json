@@ -1,0 +1,506 @@
+{
+  "started_at_utc": "2026-11-20T03:17:38.924970+00:00",
+  "finished_at_utc": "2026-11-20T03:17:54.663817+00:00",
+  "result": "PASS",
+  "jobs_passed": 21,
+  "numbered_assertions": 949,
+  "human_uat": "pending business users; automated rehearsal completed",
+  "production_pilot_started": false,
+  "cron_modified": false,
+  "operating_checksums_before": {
+    "contact": 1859318667,
+    "reports": 1319172983,
+    "users": 1097044357,
+    "roles": 1675026945,
+    "incident": 0,
+    "staff_asst": 0,
+    "trackings": 3337141388,
+    "user_history": 2096163467
+  },
+  "operating_checksums_after": {
+    "contact": 1859318667,
+    "reports": 1319172983,
+    "users": 1097044357,
+    "roles": 1675026945,
+    "incident": 0,
+    "staff_asst": 0,
+    "trackings": 3337141388,
+    "user_history": 2096163467
+  },
+  "operating_mvp_tables": 0,
+  "operating_configs_changed": false,
+  "jobs": [
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "models-smoke.php",
+      "seconds": 0.151,
+      "exit_code": 0,
+      "summary": "PASS: all 8 model mappings, live schema, search and pagination.\nPASS: existing report, users and login history pages render with restored models.\nPASS: isolated CRUD for 8 tables, relations, helpers, authentication, validation, filters and protected audit fields.",
+      "numbered_assertions": 0
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "management-smoke.php",
+      "seconds": 0.188,
+      "exit_code": 0,
+      "summary": "PASS: Contact CRUD/pages/AJAX, date and multi-select forms, CSV template/upload/errors, complete XLSX export.\nPASS: Users CRUD/pages/AJAX, hashing/reset/change password, permissions, POST-only deletion, login/logout history.\nPASS: optional-date migration is idempotent; all writes stayed in temporary tables.",
+      "numbered_assertions": 0
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "access-smoke.php",
+      "seconds": 0.049,
+      "exit_code": 0,
+      "summary": "PASS: required credentials, parameterized authentication, database reads and authenticated dashboard.",
+      "numbered_assertions": 0
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-schema-smoke.php",
+      "seconds": 0.088,
+      "exit_code": 0,
+      "summary": "PASS: 96 assertions; 14 models, FK/idempotency constraints, dates, protected fields, version conflict, rollback guard and preserved legacy data.",
+      "numbered_assertions": 96
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-policy-smoke.php",
+      "seconds": 0.13,
+      "exit_code": 0,
+      "summary": "PASS: 94 policy assertions; Own/Hotel/All, mixed roles, legacy URLs, lookups/export, grant audit/revocation, CSRF and stale sessions.",
+      "numbered_assertions": 94
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-import-smoke.php",
+      "seconds": 0.392,
+      "exit_code": 0,
+      "summary": "PASS: 116 import assertions; snapshots, explicit duplicate review, per-row rollback/resume, source/target staleness, Report preservation, permissions, UI/CSRF, reconciliation and cross-connection mutex.",
+      "numbered_assertions": 116
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-import-durability.php",
+      "seconds": 0.079,
+      "exit_code": 0,
+      "summary": "PASS: 12 durability assertions; independently visible commits, reconnect/resume, row rollback, idempotent retry and run-owned cleanup.",
+      "numbered_assertions": 12
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-customer-smoke.php",
+      "seconds": 0.286,
+      "exit_code": 0,
+      "summary": "PASS: 130 customer assertions; scoped pages, contact CRUD/archive, action/CSRF, duplicate review, version/replay, atomic Hotel handover, reminder schedules and rollback.",
+      "numbered_assertions": 130
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-customer-durability.php",
+      "seconds": 0.069,
+      "exit_code": 0,
+      "summary": "PASS: 20 customer durability assertions; independent commits, failed handover rollback, recipient/version/reminders, replay and run-owned cleanup.",
+      "numbered_assertions": 20
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-task-smoke.php",
+      "seconds": 0.4,
+      "exit_code": 0,
+      "summary": "PASS: 111 task assertions; scoped CRUD, transitions, schedule/version/replay, current-owner reopen, reminder invalidation, timezone/DST, weekly boundaries, HTML/JSON/CSRF and rollback.",
+      "numbered_assertions": 111
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-task-durability.php",
+      "seconds": 3.355,
+      "exit_code": 0,
+      "summary": "PASS: 33 task durability assertions; independent commits, atomic reminder failure, bounded retry, reconnect/replay, close vs stale reschedule and run-owned cleanup.",
+      "numbered_assertions": 33
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-report-smoke.php",
+      "seconds": 0.384,
+      "exit_code": 0,
+      "summary": "PASS: 86 Report assertions; canonical snapshots, multiple tasks/row errors, transaction rollback, replay/version, scopes/handover, quick contact, 7-day lock, legacy preservation and HTML/JSON/CSRF.",
+      "numbered_assertions": 86
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-report-durability.php",
+      "seconds": 3.3,
+      "exit_code": 0,
+      "summary": "PASS: 39 Report durability assertions; last-task rollback, quick-contact rollback, bounded whole-request retry, independent commits, reconnect/replay, lock contention and stale scope.",
+      "numbered_assertions": 39
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-pilot-acceptance.php",
+      "seconds": 0.516,
+      "exit_code": 0,
+      "evidence": {
+        "result": "PASS",
+        "assertions": 47,
+        "automated_rehearsals": [
+          "UAT01 Account/two Contacts/assignment",
+          "UAT02 Report plus three Tasks",
+          "UAT03 week/list/recipient inbox",
+          "UAT04 transitions and Report history",
+          "UAT05 optimistic concurrency",
+          "UAT06 handover and current scopes",
+          "UAT07 URL/lookup/export isolation",
+          "UAT08 source preview/import replay",
+          "UAT09 pause/restart without duplication",
+          "Cutover/incident/recovery"
+        ],
+        "human_uat": "pending; no business sign-off or production pilot performed"
+      },
+      "numbered_assertions": 47
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-backup-recovery.php",
+      "seconds": 0.334,
+      "exit_code": 0,
+      "evidence": {
+        "result": "PASS",
+        "assertions": 7,
+        "tables": 37,
+        "dump_bytes": 69762,
+        "dump_ms": 59,
+        "restore_ms": 134,
+        "scope": "local synthetic quiescent DB; not production RPO/RTO",
+        "target": "new disposable isolated schema; dropped after verification"
+      },
+      "numbered_assertions": 7
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot_restore",
+      "test": "mvp-pilot-migration.php",
+      "seconds": 0.157,
+      "exit_code": 0,
+      "summary": "PASS: 10 WP09 index migration/preflight assertions; up/down/up, no data changes, edited index guard and read-only check.",
+      "numbered_assertions": 10
+    },
+    {
+      "schema": "sale_report_mvp_test_reminder_pilot",
+      "test": "mvp-reminder-smoke.php",
+      "seconds": 0.381,
+      "exit_code": 0,
+      "summary": "PASS: 99 reminder assertions; dry-run, dispatch eligibility, exactly-once/recovery, recipient-only read, current scopes/version, inbox/JSON/CSRF/XSS, health and legacy URL.",
+      "numbered_assertions": 99
+    },
+    {
+      "schema": "sale_report_mvp_test_reminder_pilot",
+      "test": "mvp-reminder-durability.php",
+      "seconds": 0.422,
+      "exit_code": 0,
+      "summary": "PASS: 36 reminder durability assertions; rollback after notification insert, bounded retries, reconnect/recovery, two real worker processes, close/revoke races, CLI read-only checks and cleanup.",
+      "numbered_assertions": 36
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "mvp-reminder-client-smoke.js",
+      "seconds": 0.032,
+      "exit_code": 0,
+      "summary": "PASS: 13 reminder client assertions; async read-only polling, no overlap, visibility pause/resume, safe text rendering and stale-data clearing.",
+      "numbered_assertions": 13
+    },
+    {
+      "schema": "sale_report_mvp_test_performance",
+      "test": "mvp-performance.php",
+      "seconds": 4.958,
+      "exit_code": 0,
+      "evidence": {
+        "measured_at_utc": "2026-11-20T03:17:54+00:00",
+        "php": "7.4.33",
+        "mysql": "26.7.0",
+        "server_comment": "Homebrew",
+        "architecture": "arm64",
+        "fixture_counts": {
+          "crm_account": 2000,
+          "crm_task": 16000,
+          "reports": 2001,
+          "crm_notification": 2000
+        },
+        "method": "21 warm serial samples per service including rendered Task relations; counting DB command executions without SQL profiler retention; committed synthetic fixture with ANALYZE TABLE, owned-ID cleanup; not HTTP/concurrent production load",
+        "measurements": [
+          {
+            "name": "Own/accounts",
+            "samples": 21,
+            "p50_ms": 3.645,
+            "p95_ms": 4.474,
+            "max_sql": 13
+          },
+          {
+            "name": "Own/tasks_render_data",
+            "samples": 21,
+            "p50_ms": 14.404,
+            "p95_ms": 17.166,
+            "max_sql": 14
+          },
+          {
+            "name": "Own/calendar",
+            "samples": 21,
+            "p50_ms": 5.095,
+            "p95_ms": 6.932,
+            "max_sql": 6
+          },
+          {
+            "name": "Own/account_detail",
+            "samples": 21,
+            "p50_ms": 1.917,
+            "p95_ms": 2.537,
+            "max_sql": 17
+          },
+          {
+            "name": "Own/summary",
+            "samples": 21,
+            "p50_ms": 11.645,
+            "p95_ms": 12.694,
+            "max_sql": 17
+          },
+          {
+            "name": "Hotel/accounts",
+            "samples": 21,
+            "p50_ms": 4.941,
+            "p95_ms": 6.097,
+            "max_sql": 13
+          },
+          {
+            "name": "Hotel/tasks_render_data",
+            "samples": 21,
+            "p50_ms": 15.563,
+            "p95_ms": 16.149,
+            "max_sql": 14
+          },
+          {
+            "name": "Hotel/calendar",
+            "samples": 21,
+            "p50_ms": 5.497,
+            "p95_ms": 6.873,
+            "max_sql": 6
+          },
+          {
+            "name": "Hotel/account_detail",
+            "samples": 21,
+            "p50_ms": 1.876,
+            "p95_ms": 2.372,
+            "max_sql": 17
+          },
+          {
+            "name": "Hotel/summary",
+            "samples": 21,
+            "p50_ms": 1.69,
+            "p95_ms": 1.755,
+            "max_sql": 17
+          },
+          {
+            "name": "All/accounts",
+            "samples": 21,
+            "p50_ms": 2.488,
+            "p95_ms": 2.838,
+            "max_sql": 11
+          },
+          {
+            "name": "All/tasks_render_data",
+            "samples": 21,
+            "p50_ms": 1.873,
+            "p95_ms": 1.905,
+            "max_sql": 13
+          },
+          {
+            "name": "All/calendar",
+            "samples": 21,
+            "p50_ms": 5.223,
+            "p95_ms": 5.638,
+            "max_sql": 5
+          },
+          {
+            "name": "All/account_detail",
+            "samples": 21,
+            "p50_ms": 1.136,
+            "p95_ms": 1.197,
+            "max_sql": 15
+          },
+          {
+            "name": "All/summary",
+            "samples": 21,
+            "p50_ms": 5.696,
+            "p95_ms": 6.334,
+            "max_sql": 20
+          }
+        ],
+        "explain": {
+          "account_list": [
+            {
+              "id": 1,
+              "select_type": "SIMPLE",
+              "table": "t",
+              "partitions": null,
+              "type": "ALL",
+              "possible_keys": "ix_account_status,ix_account_pilot_list",
+              "key": null,
+              "key_len": null,
+              "ref": null,
+              "rows": 2000,
+              "filtered": 100,
+              "Extra": "Using where; Using filesort"
+            }
+          ],
+          "task_dates": [
+            {
+              "id": 1,
+              "select_type": "SIMPLE",
+              "table": "t",
+              "partitions": null,
+              "type": "range",
+              "possible_keys": "ix_task_pilot_dates",
+              "key": "ix_task_pilot_dates",
+              "key_len": "136",
+              "ref": null,
+              "rows": 269,
+              "filtered": 100,
+              "Extra": "Using index condition"
+            }
+          ],
+          "task_list": [
+            {
+              "id": 1,
+              "select_type": "SIMPLE",
+              "table": "t",
+              "partitions": null,
+              "type": "index",
+              "possible_keys": null,
+              "key": "ix_task_pilot_due",
+              "key_len": "9",
+              "ref": null,
+              "rows": 25,
+              "filtered": 100,
+              "Extra": null
+            }
+          ]
+        },
+        "result": "PASS",
+        "failures": []
+      },
+      "numbered_assertions": 0
+    },
+    {
+      "schema": "sale_report_mvp_test_pilot",
+      "test": "yiic.php",
+      "seconds": 0.063,
+      "exit_code": 0,
+      "evidence": {
+        "read_only": true,
+        "database": "sale_report_mvp_test_pilot",
+        "schema_ok": true,
+        "latest_migration": "m261120_110000_prepare_pilot_indexes",
+        "expected_migration": "m261120_110000_prepare_pilot_indexes",
+        "indexes": {
+          "ix_account_pilot_list": true,
+          "ix_task_pilot_dates": true,
+          "ix_task_pilot_due": true
+        },
+        "transactional_tables": [
+          {
+            "TABLE_NAME": "crm_account",
+            "ENGINE": "InnoDB"
+          },
+          {
+            "TABLE_NAME": "crm_customer_request",
+            "ENGINE": "InnoDB"
+          },
+          {
+            "TABLE_NAME": "crm_cutover",
+            "ENGINE": "InnoDB"
+          },
+          {
+            "TABLE_NAME": "crm_notification",
+            "ENGINE": "InnoDB"
+          },
+          {
+            "TABLE_NAME": "crm_task",
+            "ENGINE": "InnoDB"
+          },
+          {
+            "TABLE_NAME": "crm_task_reminder",
+            "ENGINE": "InnoDB"
+          },
+          {
+            "TABLE_NAME": "reports",
+            "ENGINE": "InnoDB"
+          }
+        ],
+        "flags": {
+          "customerWrite": false,
+          "reportWrite": false,
+          "taskWrite": false,
+          "reminders": false,
+          "legacyImportEnabled": true
+        },
+        "timezone": "Asia/Ho_Chi_Minh",
+        "runtime_writable": true,
+        "cutover": {
+          "state": {
+            "id": 1,
+            "stage": "preparing",
+            "canonical_latched": 0,
+            "lock_version": 1,
+            "changed_by": null,
+            "changed_at_utc": null,
+            "reason": null
+          },
+          "ready": false,
+          "issues": [
+            "FLAG_OFF_customerWrite",
+            "FLAG_OFF_reportWrite",
+            "FLAG_OFF_taskWrite",
+            "unmapped_contacts",
+            "unmapped_reports",
+            "unverified_reports",
+            "unreviewed_schedules"
+          ],
+          "counts": {
+            "quarantined_contacts": 0,
+            "quarantined_reports": 0,
+            "unmapped_contacts": 1,
+            "unmapped_reports": 1,
+            "unverified_reports": 1,
+            "invalid_report_assignments": 0,
+            "open_import_rows": 0,
+            "open_transfer_rows": 0,
+            "unassigned": 0,
+            "running_dispatch": 0,
+            "invalid_owners": 0,
+            "unreviewed_schedules": 2
+          },
+          "reminders_enabled": false
+        },
+        "reminder": {
+          "worker_enabled": false,
+          "healthy": false,
+          "alerts": [
+            "DISABLED",
+            "NEVER_COMPLETED"
+          ],
+          "last_success_at_utc": null,
+          "stuck_runs": 0,
+          "queue": {
+            "pending_count": 0,
+            "due_count": 0,
+            "late_pending_count": 0,
+            "failed_pending_count": 0,
+            "oldest_pending_at_utc": null
+          },
+          "latest_run": null,
+          "checked_at_utc": "2026-11-20 03:17:54"
+        },
+        "scheduler": "not_inspected_or_modified",
+        "production_pilot": "not_authorized_by_this_check"
+      },
+      "numbered_assertions": 0
+    }
+  ]
+}

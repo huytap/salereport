@@ -1,0 +1,357 @@
+{
+  "scope": "Local synthetic data only; no production writes or cron changes",
+  "baseline_revision": "b105f4a0ac2a1270b2e442590083a73e15e4a352",
+  "baseline_method": "TaskReadService from committed WP08 via auto_prepend_file; WP09 indexes removed only on the dedicated performance schema, then restored",
+  "optimized_method": "Current TaskReadService batched page labels and eager calendar Account; three WP09 indexes",
+  "production_source_counts_read_only_at_start": {
+    "contact": 1260,
+    "reports": 155
+  },
+  "before": {
+    "measured_at_utc": "2026-11-20T03:16:55+00:00",
+    "php": "7.4.33",
+    "mysql": "26.7.0",
+    "server_comment": "Homebrew",
+    "architecture": "arm64",
+    "fixture_counts": {
+      "crm_account": 2000,
+      "crm_task": 16000,
+      "reports": 2001,
+      "crm_notification": 2000
+    },
+    "method": "21 warm serial samples per service including rendered Task relations; counting DB command executions without SQL profiler retention; committed synthetic fixture with ANALYZE TABLE, owned-ID cleanup; not HTTP/concurrent production load",
+    "measurements": [
+      {
+        "name": "Own/accounts",
+        "samples": 21,
+        "p50_ms": 3.576,
+        "p95_ms": 3.753,
+        "max_sql": 13
+      },
+      {
+        "name": "Own/tasks_render_data",
+        "samples": 21,
+        "p50_ms": 20.416,
+        "p95_ms": 20.702,
+        "max_sql": 86
+      },
+      {
+        "name": "Own/calendar",
+        "samples": 21,
+        "p50_ms": 31.974,
+        "p95_ms": 33.491,
+        "max_sql": 164
+      },
+      {
+        "name": "Own/account_detail",
+        "samples": 21,
+        "p50_ms": 1.505,
+        "p95_ms": 1.587,
+        "max_sql": 17
+      },
+      {
+        "name": "Own/summary",
+        "samples": 21,
+        "p50_ms": 11.083,
+        "p95_ms": 12.287,
+        "max_sql": 17
+      },
+      {
+        "name": "Hotel/accounts",
+        "samples": 21,
+        "p50_ms": 4.092,
+        "p95_ms": 4.365,
+        "max_sql": 13
+      },
+      {
+        "name": "Hotel/tasks_render_data",
+        "samples": 21,
+        "p50_ms": 20.502,
+        "p95_ms": 23.711,
+        "max_sql": 86
+      },
+      {
+        "name": "Hotel/calendar",
+        "samples": 21,
+        "p50_ms": 34.363,
+        "p95_ms": 35.624,
+        "max_sql": 164
+      },
+      {
+        "name": "Hotel/account_detail",
+        "samples": 21,
+        "p50_ms": 1.544,
+        "p95_ms": 1.624,
+        "max_sql": 17
+      },
+      {
+        "name": "Hotel/summary",
+        "samples": 21,
+        "p50_ms": 1.79,
+        "p95_ms": 2.899,
+        "max_sql": 17
+      },
+      {
+        "name": "All/accounts",
+        "samples": 21,
+        "p50_ms": 2.691,
+        "p95_ms": 3.274,
+        "max_sql": 11
+      },
+      {
+        "name": "All/tasks_render_data",
+        "samples": 21,
+        "p50_ms": 16.884,
+        "p95_ms": 17.591,
+        "max_sql": 85
+      },
+      {
+        "name": "All/calendar",
+        "samples": 21,
+        "p50_ms": 50.12,
+        "p95_ms": 50.71,
+        "max_sql": 313
+      },
+      {
+        "name": "All/account_detail",
+        "samples": 21,
+        "p50_ms": 1.185,
+        "p95_ms": 1.274,
+        "max_sql": 15
+      },
+      {
+        "name": "All/summary",
+        "samples": 21,
+        "p50_ms": 5.799,
+        "p95_ms": 7.064,
+        "max_sql": 20
+      }
+    ],
+    "explain": {
+      "account_list": [
+        {
+          "id": 1,
+          "select_type": "SIMPLE",
+          "table": "t",
+          "partitions": null,
+          "type": "ALL",
+          "possible_keys": "ix_account_status",
+          "key": null,
+          "key_len": null,
+          "ref": null,
+          "rows": 2000,
+          "filtered": 100,
+          "Extra": "Using where; Using filesort"
+        }
+      ],
+      "task_dates": [
+        {
+          "id": 1,
+          "select_type": "SIMPLE",
+          "table": "t",
+          "partitions": null,
+          "type": "ALL",
+          "possible_keys": null,
+          "key": null,
+          "key_len": null,
+          "ref": null,
+          "rows": 15863,
+          "filtered": 0.11108888685703278,
+          "Extra": "Using where; Using filesort"
+        }
+      ],
+      "task_list": [
+        {
+          "id": 1,
+          "select_type": "SIMPLE",
+          "table": "t",
+          "partitions": null,
+          "type": "ALL",
+          "possible_keys": null,
+          "key": null,
+          "key_len": null,
+          "ref": null,
+          "rows": 15863,
+          "filtered": 100,
+          "Extra": "Using filesort"
+        }
+      ]
+    },
+    "result": "PASS",
+    "failures": []
+  },
+  "after": {
+    "measured_at_utc": "2026-11-20T03:17:00+00:00",
+    "php": "7.4.33",
+    "mysql": "26.7.0",
+    "server_comment": "Homebrew",
+    "architecture": "arm64",
+    "fixture_counts": {
+      "crm_account": 2000,
+      "crm_task": 16000,
+      "reports": 2001,
+      "crm_notification": 2000
+    },
+    "method": "21 warm serial samples per service including rendered Task relations; counting DB command executions without SQL profiler retention; committed synthetic fixture with ANALYZE TABLE, owned-ID cleanup; not HTTP/concurrent production load",
+    "measurements": [
+      {
+        "name": "Own/accounts",
+        "samples": 21,
+        "p50_ms": 3.666,
+        "p95_ms": 3.939,
+        "max_sql": 13
+      },
+      {
+        "name": "Own/tasks_render_data",
+        "samples": 21,
+        "p50_ms": 15.147,
+        "p95_ms": 16.258,
+        "max_sql": 14
+      },
+      {
+        "name": "Own/calendar",
+        "samples": 21,
+        "p50_ms": 11.845,
+        "p95_ms": 12.19,
+        "max_sql": 6
+      },
+      {
+        "name": "Own/account_detail",
+        "samples": 21,
+        "p50_ms": 1.969,
+        "p95_ms": 2.293,
+        "max_sql": 17
+      },
+      {
+        "name": "Own/summary",
+        "samples": 21,
+        "p50_ms": 11.651,
+        "p95_ms": 13.727,
+        "max_sql": 17
+      },
+      {
+        "name": "Hotel/accounts",
+        "samples": 21,
+        "p50_ms": 5.252,
+        "p95_ms": 5.604,
+        "max_sql": 13
+      },
+      {
+        "name": "Hotel/tasks_render_data",
+        "samples": 21,
+        "p50_ms": 15.796,
+        "p95_ms": 16.11,
+        "max_sql": 14
+      },
+      {
+        "name": "Hotel/calendar",
+        "samples": 21,
+        "p50_ms": 11.542,
+        "p95_ms": 12.901,
+        "max_sql": 6
+      },
+      {
+        "name": "Hotel/account_detail",
+        "samples": 21,
+        "p50_ms": 1.939,
+        "p95_ms": 2.243,
+        "max_sql": 17
+      },
+      {
+        "name": "Hotel/summary",
+        "samples": 21,
+        "p50_ms": 1.676,
+        "p95_ms": 1.747,
+        "max_sql": 17
+      },
+      {
+        "name": "All/accounts",
+        "samples": 21,
+        "p50_ms": 2.549,
+        "p95_ms": 3.016,
+        "max_sql": 11
+      },
+      {
+        "name": "All/tasks_render_data",
+        "samples": 21,
+        "p50_ms": 1.844,
+        "p95_ms": 1.907,
+        "max_sql": 13
+      },
+      {
+        "name": "All/calendar",
+        "samples": 21,
+        "p50_ms": 5.267,
+        "p95_ms": 5.548,
+        "max_sql": 5
+      },
+      {
+        "name": "All/account_detail",
+        "samples": 21,
+        "p50_ms": 1.111,
+        "p95_ms": 1.179,
+        "max_sql": 15
+      },
+      {
+        "name": "All/summary",
+        "samples": 21,
+        "p50_ms": 5.725,
+        "p95_ms": 6.203,
+        "max_sql": 20
+      }
+    ],
+    "explain": {
+      "account_list": [
+        {
+          "id": 1,
+          "select_type": "SIMPLE",
+          "table": "t",
+          "partitions": null,
+          "type": "ALL",
+          "possible_keys": "ix_account_status,ix_account_pilot_list",
+          "key": null,
+          "key_len": null,
+          "ref": null,
+          "rows": 2000,
+          "filtered": 100,
+          "Extra": "Using where; Using filesort"
+        }
+      ],
+      "task_dates": [
+        {
+          "id": 1,
+          "select_type": "SIMPLE",
+          "table": "t",
+          "partitions": null,
+          "type": "range",
+          "possible_keys": "ix_task_pilot_dates",
+          "key": "ix_task_pilot_dates",
+          "key_len": "136",
+          "ref": null,
+          "rows": 269,
+          "filtered": 100,
+          "Extra": "Using index condition"
+        }
+      ],
+      "task_list": [
+        {
+          "id": 1,
+          "select_type": "SIMPLE",
+          "table": "t",
+          "partitions": null,
+          "type": "index",
+          "possible_keys": null,
+          "key": "ix_task_pilot_due",
+          "key_len": "9",
+          "ref": null,
+          "rows": 25,
+          "filtered": 100,
+          "Extra": null
+        }
+      ]
+    },
+    "result": "PASS",
+    "failures": []
+  },
+  "interpretation": "Serial service calls, warm cache; not browser HTTP or concurrent production p95/RPO/RTO evidence."
+}
