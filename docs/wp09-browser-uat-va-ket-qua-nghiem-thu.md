@@ -1,5 +1,7 @@
 # WP09 — Nghiệm thu bằng trình duyệt trên dữ liệu giả
 
+Cập nhật sau sửa replay mở lại task (20/11/2026): **toàn bộ 21/21 bước đạt, 962 assertions** trên bốn DB test riêng. Đã đối soát checksum vận hành và dọn fixture. [Bàn giao và kết quả mới nhất](wp09-ban-giao-sau-sua-replay.md), [evidence đầy đủ](wp09-replay-acceptance-evidence.json). Lượt này chạy tự động; kết quả browser trước đó và chữ ký nghiệp vụ được theo dõi riêng.
+
 Ngày 20/11/2026. **9/9 kịch bản đạt qua trình duyệt**, gồm hoàn tất UAT08–09 và kiểm tra lại lỗi phát hiện trong lượt UAT. Người thực hiện: tác nhân kiểm thử Codex; **chưa thay chữ ký xác nhận của chủ nghiệp vụ**, chưa mở pilot production. [Evidence chi tiết JSON](wp09-browser-uat-evidence.json).
 
 ## Môi trường và kết quả

@@ -4,6 +4,8 @@ Ngày triển khai: 20/11/2026. Tài liệu này dùng cùng [kế hoạch MVP](
 
 ## 1. Trạng thái bàn giao
 
+Cập nhật sau sửa replay mở lại task (20/11/2026): **toàn bộ 21/21 bước đạt, 962 assertions** trên bốn DB test riêng. Đã đối soát checksum vận hành và dọn fixture. [Bàn giao và kết quả mới nhất](wp09-ban-giao-sau-sua-replay.md), [evidence đầy đủ](wp09-replay-acceptance-evidence.json). Lượt này chạy tự động; kết quả browser trước đó và chữ ký nghiệp vụ được theo dõi riêng.
+
 Đã chuẩn bị bộ nghiệm thu tự động xuyên suốt, đo truy vấn bằng dữ liệu giả, migration chỉ mục, CLI preflight, diễn tập dump/restore và quy trình pilot. Chưa thực hiện UAT có người dùng nghiệp vụ xác nhận, tải đồng thời qua HTTP hoặc pilot production. Chưa bật cron, migrate DB vận hành, sửa quyền vận hành hoặc bật cờ vận hành.
 
 Các service ghi/CLI hiện vẫn yêu cầu `IsolatedTestDbConnection`. Đạt bộ test **không** tự cho phép chạy production. Muốn mở production cần một thay đổi cấu hình/entry point riêng được kiểm tra, thay vì bỏ guard hoặc trỏ cấu hình test vào `sale_report`.

@@ -77,7 +77,8 @@ class TaskController extends ScopedController
     {
         TaskService::authorize($mode); $task=CustomerPolicy::load('Task','task','task',$mode,$id); $values=$this->values($task); $errors=array(); $conflict=false; $key=bin2hex(random_bytes(16)); $version=$task->lock_version;
         if ($mode!=='reopen' && !in_array($task->status,array('open','in_progress'),true)) { throw new CHttpException(409,'Công việc đã đóng.'); }
-        if ($mode==='reopen' && !in_array($task->status,array('completed','cancelled'),true)) { throw new CHttpException(409,'Công việc chưa đóng.'); }
+        // POST must reach the service journal: a successful reopen retry now sees an open task.
+        if ($mode==='reopen' && !Yii::app()->request->isPostRequest && !in_array($task->status,array('completed','cancelled'),true)) { throw new CHttpException(409,'Công việc chưa đóng.'); }
         if (Yii::app()->request->isPostRequest) {
             $fields=$this->fields(); $values=array_merge($values,$fields); $key=Yii::app()->request->getPost('request_key'); $version=Yii::app()->request->getPost('expected_version');
             try {

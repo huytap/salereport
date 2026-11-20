@@ -1,5 +1,7 @@
 # WP09 — Kết quả nghiệm thu kỹ thuật và đo truy vấn
 
+Cập nhật sau sửa replay mở lại task (20/11/2026): **toàn bộ 21/21 bước đạt, 962 assertions** trên bốn DB test riêng. Đã đối soát checksum vận hành và dọn fixture. [Bàn giao và kết quả mới nhất](wp09-ban-giao-sau-sua-replay.md), [evidence đầy đủ](wp09-replay-acceptance-evidence.json). Lượt này chạy tự động; kết quả browser trước đó và chữ ký nghiệp vụ được theo dõi riêng.
+
 Ngày 20/11/2026. Hoàn thành phần kỹ thuật và chuẩn bị UAT/pilot trong phạm vi DB test. **Chưa có UAT nghiệp vụ ký xác nhận hoặc pilot production**. [Runbook và bảng nghiệm thu](wp09-van-hanh-va-ke-hoach-pilot.md) ghi rõ người phụ trách và các điều kiện còn chờ.
 
 Cập nhật sau UAT bằng trình duyệt: **9/9 kịch bản đạt**, gồm import/replay/skip archive và worker/inbox/stale heartbeat. Đã sửa lỗi phát hiện, hồi quy **21/21 bước, 955 assertions**. Xem [biên bản browser UAT và ảnh](wp09-browser-uat-va-ket-qua-nghiem-thu.md). Các số 949 và benchmark bên dưới là mốc nghiệm thu kỹ thuật trước lượt browser; chữ ký nghiệp vụ vẫn chờ.
