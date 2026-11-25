@@ -1,0 +1,190 @@
+{
+  "date": "2026-11-25",
+  "result": "PASS with explicit supplemental controller coverage for reopen POST replay",
+  "browser": "ChatGPT in-app browser",
+  "base_url": "http://127.0.0.1:8098",
+  "database": "sale_report_mvp_test_staging_pilot",
+  "data": "synthetic only",
+  "cases": [
+    {
+      "id": "UAT01",
+      "result": "PASS",
+      "observed": "Manager tạo Account #2, Contact #3/#4 chung email và giao A #3 tại H1.",
+      "screenshots": [
+        "staging-uat/01-contacts.jpg"
+      ]
+    },
+    {
+      "id": "UAT02",
+      "result": "PASS",
+      "observed": "Report #2 và Task #2–4; lịch sai không lưu dữ liệu, sửa xong lưu đủ ba task.",
+      "screenshots": [
+        "staging-uat/02-validation.jpg",
+        "staging-uat/03-report-tasks.jpg"
+      ]
+    },
+    {
+      "id": "UAT03",
+      "result": "PASS",
+      "observed": "Lịch tuần 23–29/11 đúng 14:00–15:00 và hạn ngày; A nhận một nhắc, đánh dấu đọc về 0.",
+      "screenshots": [
+        "staging-uat/04-calendar.jpg",
+        "staging-uat/05-a-inbox.jpg"
+      ]
+    },
+    {
+      "id": "UAT04",
+      "result": "PASS",
+      "observed": "Task #2 completed, #3 cancelled, #4 đổi lịch; Report giữ version 1 và một sự kiện created.",
+      "screenshots": [
+        "staging-uat/07-report-unchanged.jpg"
+      ]
+    },
+    {
+      "id": "UAT05",
+      "result": "PASS",
+      "observed": "Hai cửa sổ: lưu bản cũ bị 409, giữ dữ liệu và khóa Save; mở bản mới thấy lịch hiện hành. Manager mở lại task đóng thành công. Replay cùng POST được kiểm tra bổ sung bằng controller trên DB hồi quy, không xác nhận qua browser.",
+      "screenshots": [
+        "staging-uat/06-conflict.jpg"
+      ]
+    },
+    {
+      "id": "UAT06",
+      "result": "PASS",
+      "observed": "Preview một việc mở #4, bàn giao B #4; #2/#3 vẫn A, A truy cập hồ sơ bị 404.",
+      "screenshots": [
+        "staging-uat/08-handover-preview.jpg",
+        "staging-uat/09-handover-result.jpg",
+        "staging-uat/10-a-denied.jpg"
+      ]
+    },
+    {
+      "id": "UAT07",
+      "result": "PASS",
+      "observed": "Outside H2: URL Account/Task 404, lookup [], export 404, list 0; reader xem được nhưng update/create 403.",
+      "screenshots": [
+        "staging-uat/11-outside-empty.jpg",
+        "staging-uat/12-reader.jpg"
+      ]
+    },
+    {
+      "id": "UAT08",
+      "result": "PASS",
+      "observed": "Batch #1/#2 linked, nhập lại cùng batch không tăng bản ghi; batch #3 nguồn trùng cần review, skip vẫn giữ snapshot.",
+      "screenshots": [
+        "staging-uat/13-contact-reconcile.jpg",
+        "staging-uat/14-report-import.jpg",
+        "staging-uat/15-ambiguous-source.jpg",
+        "staging-uat/16-skip-archive.jpg"
+      ]
+    },
+    {
+      "id": "UAT09",
+      "result": "PASS",
+      "observed": "B thấy task khi worker không chạy; mặc định từ chối dispatch, dry-run 1, dispatch tạo 1, chạy lại 0; B đánh dấu đọc, A không thấy nhắc B.",
+      "screenshots": [
+        "staging-uat/17-b-before-worker.jpg",
+        "staging-uat/18-b-notification.jpg",
+        "staging-uat/19-replay-single-notice.jpg",
+        "staging-uat/20-a-no-b-notice.jpg"
+      ]
+    }
+  ],
+  "supplemental_regression": {
+    "suite": "mvp-task-smoke.php",
+    "database": "sale_report_mvp_test_pilot",
+    "result": "PASS",
+    "assertions": 121,
+    "note": "Includes same-key reopen JSON/HTML replay; browser Back performed GET and returned expected 409, so no claim of browser POST replay."
+  },
+  "db_readback": {
+    "database": "sale_report_mvp_test_staging_pilot",
+    "queries": {
+      "counts": "2\t4\t4\t3\t2\n",
+      "tasks": "1\t1\t3\topen\t1\t1\n2\t2\t3\tcompleted\t2\t2\n3\t2\t3\tcancelled\t4\t4\n4\t2\t4\topen\t4\t4\n",
+      "notices": "2\t3\t1\tbefore\t1\n4\t4\t4\tbefore\t1\n",
+      "imports": "1\tlegacy_contact\tcompleted\n2\tlegacy_report\tcompleted\n3\tlegacy_contact\tcompleted\n",
+      "report": "2\t1\n",
+      "snapshot": "1\tlinked\t571\n2\tlinked\t770\n3\tskipped\t604\n"
+    },
+    "production_checksums_before_and_after": "sale_report.contact\t1859318667\nsale_report.reports\t1319172983\nsale_report.users\t1097044357\nsale_report.roles\t1675026945\nsale_report.incident\t0\nsale_report.staff_asst\t0\nsale_report.trackings\t3337141388\nsale_report.user_history\t2096163467\n"
+  },
+  "worker_uat09": [
+    {
+      "args": [
+        "dispatch"
+      ],
+      "exit_code": 2,
+      "result": {
+        "error_code": "REQUEST_REJECTED",
+        "message": "Dispatch đang tắt. Chỉ bật tạm cho process test bằng --enableTest=1."
+      }
+    },
+    {
+      "args": [
+        "dispatch",
+        "--dryRun=1"
+      ],
+      "exit_code": 0,
+      "result": {
+        "dry_run": true,
+        "worker_enabled": false,
+        "selected_count": 1,
+        "would_deliver": 1,
+        "would_cancel": 0,
+        "would_recover": 0,
+        "reasons": []
+      }
+    },
+    {
+      "args": [
+        "dispatch",
+        "--enableTest=1"
+      ],
+      "exit_code": 0,
+      "result": {
+        "run_id": 2,
+        "run_key": "4cd84fc20e94c17b11295abc4f59f540",
+        "dry_run": false,
+        "status": "completed",
+        "selected_count": 1,
+        "budget_exhausted": false,
+        "cutover_paused": false,
+        "created_count": 1,
+        "recovered_count": 0,
+        "cancelled_count": 0,
+        "skipped_count": 0,
+        "error_count": 0,
+        "processed_count": 1
+      }
+    },
+    {
+      "args": [
+        "dispatch",
+        "--enableTest=1"
+      ],
+      "exit_code": 0,
+      "result": {
+        "run_id": 3,
+        "run_key": "ab982b52dc65d0d81dbf4c788a7b097c",
+        "dry_run": false,
+        "status": "completed",
+        "selected_count": 0,
+        "budget_exhausted": false,
+        "cutover_paused": false,
+        "created_count": 0,
+        "recovered_count": 0,
+        "cancelled_count": 0,
+        "skipped_count": 0,
+        "error_count": 0,
+        "processed_count": 0
+      }
+    }
+  ],
+  "production_writes": false,
+  "cron_changed": false,
+  "new_application_defects": [],
+  "business_owner_signoff": "pending",
+  "retained_fixture": true,
+  "server": "existing staging server left running"
+}
